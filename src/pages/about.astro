@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="About — Rao Shahzaib" description="About Rao Shahzaib: DevOps engineer, freelance DevOps 2023–2025, MCS 2017–2019, and how he works — Git as source of truth, security shift-left." canonical="https://raoshahzaib.site/about/">
+<h1>About</h1>
+<p class="lede">I am Rao Shahzaib, a DevOps engineer from Rahim Yar Khan, Pakistan. I learn by building: my Kubernetes platform, my SaaS projects, and my content all come from systems I actually run.</p>
+<p>I did not come to DevOps through a single job title. I started with Linux administration, ran my own business for two years, then worked as a freelance DevOps engineer from January 2023 to September 2025. Along the way I kept a habit that still defines how I work: if I cannot explain a system, I have not understood it yet. That is why I write &mdash; long technical articles on networking, Docker, and Kubernetes, on my blogs and on LinkedIn.</p>
+
+<h2>Experience</h2>
+<ul class="timeline">
+<li><span class="when">2017&ndash;2019 &mdash; MCS, NCBA&amp;E, Rahim Yar Khan.</span> Master&rsquo;s in Computer Science at the National College of Business Administration &amp; Economics.</li>
+<li><span class="when">Linux Administrator.</span> Worked as a Linux administrator at a local software house, running Linux servers and networking day to day.</li>
+<li><span class="when">Own business, 2 years.</span> Ran my own business for two years, which taught me the other side of technology: customers, costs, and keeping a service up.</li>
+<li><span class="when">Jan 2023 &ndash; Sep 2025 &mdash; Freelance DevOps Engineer (remote).</span> Built CI/CD automation with Jenkins and GitHub Actions, containerized apps with Docker on Kubernetes, automated provisioning with Ansible, and deployed Nginx and Apache on Linux and DigitalOcean. Diagnosed infrastructure problems across Linux, NFS, RAID, and thin provisioning.</li>
+<li><span class="when">2023 &ndash; present &mdash; Content creation.</span> In-depth technical write-ups on DevOps and infrastructure, including a long-running series on networking internals: iptables, NAT, and Docker/Kubernetes networking.</li>
+<li><span class="when">Sep 2026 &ndash; present &mdash; Production Kubernetes platform.</span> A 2-node k3s cluster on OCI Always Free, run as a production-style platform with ArgoCD GitOps, Velero disaster recovery, and Prometheus/Grafana monitoring.</li>
+<li><span class="when">Oct 2026 &ndash; present &mdash; CreatorWatch Cloud.</span> A license-key SaaS backend with a web UI and admin panel, deployed on the OCI platform.</li>
+</ul>
+
+<h2>How I work</h2>
+<ul>
+<li><strong>Official tooling first.</strong> I learn a tool the way its makers intend, and only customize after I understand it.</li>
+<li><strong>Security shift-left.</strong> Secrets never live in code or in cluster manifests. They live in a vault and are delivered by External Secrets. Security is part of the design, not a step at the end.</li>
+<li><strong>Git is the source of truth.</strong> If a change is not in Git, it does not exist. Deploys happen from Git, rollbacks are a revert, and drift gets detected and fixed.</li>
+<li><strong>Verify everything.</strong> A backup is only real after a restore drill. A pipeline is only green after a real run. I test what I build and measure what I claim.</li>
+</ul>
+<p>I am currently open to remote DevOps roles. My CV is at <a href="https://cv.raoshahzaib.site">cv.raoshahzaib.site</a>, and you can reach me at <a href="mailto:contact@raoshahzaib.site">contact@raoshahzaib.site</a>.</p>
+</BaseLayout>

@@ -3,30 +3,42 @@
 Personal portfolio and blog hub for the root domain **raoshahzaib.site**.
 Rao Shahzaib, DevOps Engineer (Kubernetes, Docker, CI/CD, AWS, Ansible).
 
-Static site, system fonts only, no frameworks, no external assets.
+Built with [Astro](https://astro.build) (static site, no frameworks in the
+browser) and hosted on **Cloudflare Pages** — chosen for its caching, CDN
+and features. (GitHub Pages was considered and dropped.) The old Python
+generator (`build_site.py`) and the old Cloudflare workflow are gone; the
+Astro project in this repo is the only source of truth.
 
 ## Structure
 
-- `build_site.py` — the whole site lives here. It generates `build/`
-  (pages as `pagename.html` AND `pagename/index.html` for clean
-  trailing-slash URLs, plus `robots.txt`, `sitemap.xml`, `ads.txt`).
-  Edit the content in this file, never in `build/` — it is wiped and
-  regenerated on every build.
-- `.github/workflows/deploy.yml` — CI/CD: push to `main` builds the
-  site and deploys it to Cloudflare Pages.
+- `src/pages/` — Home, About, Projects, Blog hub, Contact, Privacy,
+  Terms, 404 (`src/pages/404.astro`).
+- `src/pages/blog/[slug].astro` — template for the blog articles.
+- `src/content/blog/*.md` — the 5 original DevOps articles (content
+  collection; each file's frontmatter holds its `title`, `description`
+  and `slug`).
+- `src/layouts/BaseLayout.astro` — header nav, footer, SEO meta,
+  canonical, Open Graph / Twitter tags, JSON-LD (WebSite everywhere,
+  Person on the homepage).
+- `src/styles/global.css` — the whole stylesheet (system fonts only).
+- `public/` — `robots.txt` and `ads.txt`. Astro copies these into the
+  build output untouched. There is no `CNAME` file: on Cloudflare Pages
+  the custom domain is set in the dashboard, not via a file.
+- `astro.config.mjs` — `site: https://raoshahzaib.site` + sitemap
+  integration (generates `sitemap-index.xml`).
 
-## Build locally
+## Develop locally
 
 ```bash
-python3 build_site.py
-python3 -m http.server 8000 --directory build
+npm install
+npm run dev
 ```
 
 ## Deploy
 
-Push to `main` and GitHub Actions deploys to Cloudflare Pages
-(project `raoshahzaib-site`). The first run creates the Pages project.
-Hosting is **Cloudflare Pages, not GitHub Pages**.
+Push to `main` and GitHub Actions builds the site and deploys it to
+Cloudflare Pages (project `raoshahzaib-site`). The first run creates the
+Pages project. No zip upload, no manual step.
 
 ### One-time setup (owner does this once)
 
@@ -48,10 +60,13 @@ Hosting is **Cloudflare Pages, not GitHub Pages**.
 5. Push any commit to `main` (or run the workflow manually) and check
    https://raoshahzaib.site/ loads.
 
+Until the two secrets are added, the workflow fails at the deploy step.
+Add the secrets, then re-run it from the Actions tab.
+
 ## AdSense
 
 After the root site is live, add the bare domain `raoshahzaib.site`
 in Google AdSense (subdomains cannot be added on their own; an
 approved root domain covers its subdomains). When AdSense gives the
-verification code / publisher ID, put the publisher line in `ads.txt`
-in `build_site.py` and push — the next deploy publishes it.
+publisher ID, put the publisher line in `public/ads.txt` and push —
+the next deploy publishes it.

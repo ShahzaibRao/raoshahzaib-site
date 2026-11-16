@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Rao Shahzaib — DevOps Engineer" description="Rao Shahzaib — DevOps Engineer. Kubernetes, Docker, CI/CD, GitOps, Terraform, Ansible. Projects, writing, and contact." canonical="https://raoshahzaib.site/" person>
+<section class="hero">
+<h1>Rao Shahzaib</h1>
+<p class="tagline">DevOps Engineer &mdash; I build reliable infrastructure: Kubernetes platforms, GitOps pipelines, and systems that recover when things break.</p>
+<p class="lede">I am a DevOps engineer based in Rahim Yar Khan, Pakistan, working remotely. I have spent the last three years building and operating real systems &mdash; a production-style Kubernetes platform on Oracle Cloud, a license-key SaaS, a social fitness app, and a permanent email service &mdash; and I write about what I learn along the way.</p>
+<p><a href="/about/">More about me &rarr;</a> &nbsp; <a href="/contact/">Get in touch &rarr;</a></p>
+</section>
+
+<h2>What I do</h2>
+<div class="skills">
+<div><b>Containers &amp; Orchestration</b>Docker, Kubernetes (k3s)</div>
+<div><b>CI/CD &amp; GitOps</b>Jenkins, GitHub Actions, ArgoCD</div>
+<div><b>Infrastructure as Code</b>Terraform, Ansible</div>
+<div><b>Cloud</b>AWS, Oracle Cloud (OCI), DigitalOcean</div>
+<div><b>Secrets, TLS &amp; DNS</b>External Secrets Operator, OCI Vault, cert-manager, Cloudflare</div>
+<div><b>Monitoring &amp; Backup</b>Prometheus, Grafana, Alertmanager, Velero</div>
+<div><b>Linux &amp; Networking</b>Administration, iptables, NAT, NFS, RAID, Traefik</div>
+<div><b>Virtualization &amp; Web</b>Proxmox (2-node cluster), Nginx, Apache</div>
+</div>
+
+<h2>Featured projects</h2>
+<div class="cards">
+<div class="card"><h3>Production Kubernetes Platform</h3><p>A 2-node k3s cluster on OCI Always Free with ArgoCD GitOps, Velero disaster recovery, and Prometheus/Grafana monitoring. A full restore drill passed: a deleted namespace came back with pods Running.</p><p class="tech">k3s &middot; Terraform &middot; ArgoCD &middot; Velero &middot; OCI</p></div>
+<div class="card"><h3>LifeQuest</h3><p>A social health and fitness app with a GPS territory-capture game: walk, capture hexes on a map, challenge friends, climb the leaderboard.</p><p class="tech">React Native &middot; Expo &middot; FastAPI &middot; PostgreSQL + PostGIS</p><p><a href="https://github.com/ShahzaibRao/lifequest">github.com/ShahzaibRao/lifequest &rarr;</a></p></div>
+<div class="card"><h3>DownPilot</h3><p>An Electron desktop downloader with a Go sidecar: paste a link, pick a quality, and download videos, playlists, and creator content.</p><p class="tech">Electron &middot; Go &middot; yt-dlp</p><p><a href="https://github.com/ShahzaibRao/downpilot">github.com/ShahzaibRao/downpilot &rarr;</a></p></div>
+<div class="card"><h3>CreatorWatch</h3><p>A license-key SaaS: accounts, encrypted license keys, and a validation API that desktop apps call to check a license. Deployed on the OCI platform over HTTPS.</p><p class="tech">FastAPI &middot; PostgreSQL &middot; Fernet &middot; Docker</p></div>
+<div class="card"><h3>Rao Shahzaib Mail</h3><p>A free permanent email service. One account creates up to 100 email addresses on @raoshahzaib.site &mdash; addresses that never expire. Receive-only, running on Cloudflare for three years.</p><p class="tech">Cloudflare Workers &middot; Pages &middot; D1</p><p><a href="https://webmail.raoshahzaib.site">webmail.raoshahzaib.site &rarr;</a></p></div>
+<div class="card"><h3>Video Ad Editor</h3><p>An offline-first desktop app that inserts ad videos mid-roll into a primary video and renders one finished MP4.</p><p class="tech">Rust &middot; Slint &middot; FFmpeg</p></div>
+</div>
+<p><a href="/projects/">All projects &rarr;</a></p>
+
+<h2>From the blog</h2>
+<ul>
+<li><a href="/blog/gitops-with-argocd/">GitOps with ArgoCD: why Git is the source of truth</a></li>
+<li><a href="/blog/docker-multi-stage-builds/">Smaller Docker images with multi-stage builds</a></li>
+<li><a href="/blog/cicd-pipeline-design/">Designing a CI/CD pipeline that fails safe</a></li>
+<li><a href="/blog/kubernetes-backup-disaster-recovery/">Kubernetes backups and disaster recovery: what actually restores</a></li>
+<li><a href="/blog/running-your-own-email/">Running your own email service: what three years taught me</a></li>
+</ul>
+<p>I also write longer technical pieces at <a href="https://blog.raoshahzaib.site">blog.raoshahzaib.site</a> and <a href="https://docker.raoshahzaib.site">docker.raoshahzaib.site</a>.</p>
+
+<div class="cta">
+<h2 style="margin-top:0">Open to remote DevOps roles</h2>
+<p>I am looking for a remote DevOps role in a strong engineering team. If you are hiring, or you want to talk about Kubernetes, CI/CD, or GitOps, write to me.</p>
+<p><a href="mailto:contact@raoshahzaib.site">contact@raoshahzaib.site</a> &nbsp;&middot;&nbsp; <a href="https://cv.raoshahzaib.site">View my CV</a></p>
+</div>
+</BaseLayout>

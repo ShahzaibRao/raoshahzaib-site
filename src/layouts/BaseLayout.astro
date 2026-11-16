@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  person?: boolean;
+}
+
+const { title, description, canonical, person = false } = Astro.props;
+
+const WEBSITE_LD = `{"@context":"https://schema.org","@type":"WebSite","url":"https://raoshahzaib.site/","name":"Rao Shahzaib","description":"Rao Shahzaib — DevOps Engineer. Kubernetes, Docker, CI/CD, GitOps.","inLanguage":"en"}`;
+const PERSON_LD = `{"@context":"https://schema.org","@type":"Person","name":"Rao Shahzaib","jobTitle":"DevOps Engineer","url":"https://raoshahzaib.site/","email":"contact@raoshahzaib.site","address":{"@type":"PostalAddress","addressLocality":"Rahim Yar Khan","addressCountry":"PK"},"sameAs":["https://www.linkedin.com/in/rao-shahzaib/","https://github.com/ShahzaibRao","https://blog.raoshahzaib.site","https://docker.raoshahzaib.site","https://cv.raoshahzaib.site"]}`;
+const jsonLd = person ? `[${WEBSITE_LD},${PERSON_LD}]` : `[${WEBSITE_LD}]`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Rao Shahzaib" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={jsonLd}></script>
+  </head>
+  <body>
+    <header class="site"><div class="wrap"><a class="brand" href="/">Rao Shahzaib<small>DevOps Engineer</small></a><nav class="main"><a href="/">Home</a><a href="/about/">About</a><a href="/projects/">Projects</a><a href="/blog/">Blog</a><a href="/contact/">Contact</a></nav></div></header>
+    <main><div class="wrap">
+      <slot />
+    </div></main>
+    <footer class="site"><div class="wrap"><nav><a href="/">Home</a><a href="/about/">About</a><a href="/projects/">Projects</a><a href="/blog/">Blog</a><a href="/contact/">Contact</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav><p>Copyright &copy; 2023-2026 Rao Shahzaib &middot; <a href="mailto:contact@raoshahzaib.site">contact@raoshahzaib.site</a></p><p>DevOps Engineer &middot; Rahim Yar Khan, Pakistan &middot; Working remotely</p></div></footer>
+  </body>
+</html>

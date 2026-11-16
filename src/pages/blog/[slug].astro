@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<BaseLayout
+  title={`${post.data.title} — Rao Shahzaib`}
+  description={post.data.description}
+  canonical={`https://raoshahzaib.site/blog/${post.data.slug}/`}
+>
+  <article class="post">
+    <h1>{post.data.title}</h1>
+    <Content />
+    <p><a href="/blog/">&larr; All articles</a></p>
+  </article>
+</BaseLayout>

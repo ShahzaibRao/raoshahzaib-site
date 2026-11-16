@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Projects — Rao Shahzaib" description="Projects by Rao Shahzaib: a production Kubernetes platform on OCI, LifeQuest, DownPilot, CreatorWatch, a permanent email service, and a video ad editor." canonical="https://raoshahzaib.site/projects/">
+<h1>Projects</h1>
+<p class="lede">Systems I built and operate. Each one taught me something I now use on the next one.</p>
+
+<h2>Production Kubernetes Platform &mdash; OCI Always Free</h2>
+<p>A production-style platform on two OCI Always Free ARM VMs: a 2-node k3s cluster provisioned with modular Terraform, with state in Cloudflare R2. ArgoCD runs app-of-apps GitOps through an ApplicationSet that manages cert-manager, External Secrets, monitoring, Velero, and the app workloads. Daily GitHub Actions drift detection keeps the cluster honest. Disaster recovery is Velero daily backups to R2 with a 30-day retention, and it is proven, not assumed: a full restore drill deleted a namespace and brought it back with pods Running. Secrets moved from Sealed Secrets to External Secrets Operator plus OCI Vault, TLS is a wildcard certificate from cert-manager with Cloudflare DNS-01, and traffic enters through an OCI load balancer with health checks.</p>
+<p class="muted">k3s &middot; Terraform &middot; ArgoCD &middot; Velero &middot; Prometheus &middot; Grafana &middot; OCI &middot; Cloudflare R2</p>
+
+<h2>LifeQuest</h2>
+<p>A social health and fitness app: meals and calories, steps and distance, sleep, exercise, and water, plus a GPS territory-capture game. Walk a hex on the map and capture it; friends can challenge your territory; a weekly leaderboard ranks everyone. The app is one React Native and Expo codebase for iPhone and Android, with MapLibre and OpenStreetMap, H3 hexes, and a FastAPI backend on PostgreSQL with PostGIS. It is offline-first: sessions are saved on the device and synced when the connection returns.</p>
+<p><a href="https://github.com/ShahzaibRao/lifequest">github.com/ShahzaibRao/lifequest &rarr;</a></p>
+<p class="muted">React Native &middot; Expo &middot; FastAPI &middot; PostgreSQL + PostGIS &middot; H3 &middot; Docker</p>
+
+<h2>DownPilot</h2>
+<p>An Electron desktop app for downloading videos, with a Go sidecar doing the heavy work. Paste a link and it detects whether it is a single video, a playlist, or a channel; pick a quality, queue up to four downloads at once, and keep a history. A prospect mode watches creators and downloads new content automatically. Free for local use; cloud features are the paid tier.</p>
+<p><a href="https://github.com/ShahzaibRao/downpilot">github.com/ShahzaibRao/downpilot &rarr;</a></p>
+<p class="muted">Electron &middot; Go &middot; yt-dlp &middot; Windows-first</p>
+
+<h2>CreatorWatch</h2>
+<p>A license-key SaaS. The desktop product stays local; the cloud side is accounts, licenses, and a validation API. Keys are Fernet-encrypted, the web UI and admin panel manage users, licenses, devices, and revenue, and the backend runs on PostgreSQL (SQLite as a fallback). Multi-architecture CI builds versioned images to Docker Hub, and the service is deployed through ArgoCD on the OCI platform over HTTPS. The repository is open source.</p>
+<p class="muted">FastAPI &middot; PostgreSQL &middot; Fernet &middot; Docker &middot; ArgoCD</p>
+
+<h2>Rao Shahzaib Mail &mdash; permanent email</h2>
+<p>A free permanent email service, running for three years. One account creates up to 100 email addresses on @raoshahzaib.site, and none of them expire &mdash; the opposite of a throwaway inbox. It is receive-only by design, hosted on Cloudflare Workers, Pages, and D1. There is a second instance at <a href="https://inbox.crackone.org">inbox.crackone.org</a> that works the same way.</p>
+<p><a href="https://webmail.raoshahzaib.site">webmail.raoshahzaib.site &rarr;</a></p>
+<p class="muted">Cloudflare Workers &middot; Pages &middot; D1</p>
+
+<h2>Video Ad Editor</h2>
+<p>An offline-first desktop app that inserts ad videos mid-roll into a primary video and renders one finished MP4. Built for the machine it runs on: no cloud, no upload, just the file and the result.</p>
+<p class="muted">Rust &middot; Slint &middot; FFmpeg</p>
+
+<h2>Writing &amp; study</h2>
+<p>Alongside the code, I keep two long-running study threads: a system-design series covering indexing, replication, sharding, and Kafka, and coding lessons built around a small FastAPI link shortener. The notes from both land on <a href="https://blog.raoshahzaib.site">blog.raoshahzaib.site</a> and <a href="https://docker.raoshahzaib.site">docker.raoshahzaib.site</a>.</p>
+</BaseLayout>
