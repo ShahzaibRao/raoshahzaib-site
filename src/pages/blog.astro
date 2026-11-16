@@ -1,15 +1,16 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog')).sort((a, b) => a.data.slug.localeCompare(b.data.slug));
 ---
 <BaseLayout title="Blog — Rao Shahzaib" description="DevOps articles by Rao Shahzaib: GitOps with ArgoCD, Docker multi-stage builds, CI/CD pipeline design, Kubernetes disaster recovery, running an email service." canonical="https://raoshahzaib.site/blog/">
 <h1>Blog</h1>
 <p class="lede">Short, practical articles about DevOps, Kubernetes, and running real systems. Everything here is written from systems I actually operate.</p>
 <ul>
-<li><a href="/blog/gitops-with-argocd/">GitOps with ArgoCD: why Git is the source of truth</a> &mdash; The cluster follows Git, not the other way round. How ArgoCD, drift detection, and pull-request reviews keep a real Kubernetes platform honest.</li>
-<li><a href="/blog/docker-multi-stage-builds/">Smaller Docker images with multi-stage builds</a> &mdash; A Dockerfile that ships its compiler is slow to pull and easy to attack. Multi-stage builds keep the build tools out of the final image.</li>
-<li><a href="/blog/cicd-pipeline-design/">Designing a CI/CD pipeline that fails safe</a> &mdash; A good pipeline is not the fastest one. It is the one that refuses to ship a broken build and can always roll back.</li>
-<li><a href="/blog/kubernetes-backup-disaster-recovery/">Kubernetes backups and disaster recovery: what actually restores</a> &mdash; A backup you have never restored is a hope, not a plan. Velero, a real restore drill, and the gaps most people only find during an incident.</li>
-<li><a href="/blog/running-your-own-email/">Running your own email service: what three years taught me</a> &mdash; Why the service is receive-only, why the addresses never expire, and what the real work turns out to be.</li>
+  {posts.map((post) => (
+    <li><a href={`/blog/${post.data.slug}/`}>{post.data.title}</a> &mdash; {post.data.description}</li>
+  ))}
 </ul>
 <h2>Elsewhere</h2>
 <p>I publish longer technical pieces &mdash; including a long-running series on networking internals (iptables, NAT, and Docker/Kubernetes networking) &mdash; at <a href="https://blog.raoshahzaib.site">blog.raoshahzaib.site</a> and <a href="https://docker.raoshahzaib.site">docker.raoshahzaib.site</a>. My older blog is at <a href="https://shahzaibraocloud.blogspot.com">shahzaibraocloud.blogspot.com</a>.</p>
