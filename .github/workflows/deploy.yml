@@ -2,8 +2,9 @@ name: Deploy to Cloudflare Pages
 
 # Push to main -> build the Astro site -> deploy to Cloudflare Pages.
 # Hosting is Cloudflare Pages (chosen for its caching, CDN and features).
-# First run creates the Pages project "raoshahzaib-site" if missing.
 # Requires repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
+# Note: `wrangler pages deploy` does NOT create a missing project, so the
+# workflow creates it first (idempotent -- harmless if it already exists).
 on:
   push:
     branches: [main]
@@ -17,15 +18,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build site
         run: npm run build
+
+      - name: Create Pages project if missing
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx -y wrangler@3.90.0 pages project create raoshahzaib-site --production-branch=main || true
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
