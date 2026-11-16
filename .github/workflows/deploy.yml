@@ -1,0 +1,28 @@
+name: Deploy to Cloudflare Pages
+
+# Push to main -> build the static site -> deploy to Cloudflare Pages.
+# Hosting is Cloudflare Pages (not GitHub Pages). First run creates the
+# Pages project "raoshahzaib-site" if it does not exist yet.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build site
+        run: python3 build_site.py
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build --project-name=raoshahzaib-site --commit-dirty=true
