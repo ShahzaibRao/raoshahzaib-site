@@ -6,7 +6,7 @@ slug: "running-your-own-email"
 
 By Rao Shahzaib · DevOps
 
-I have paid for an email service for three years that most people never see. It is a permanent email service, not a throwaway one: one account creates up to 100 email addresses on my own domain, and none of them expire. The idea is simple. Most of us hand the same address to every website we sign up for, and then wonder why the spam never stops. A different address for every site means you always know which site shared it, and you can stop using that address without changing your real email anywhere else.
+I have run an email service for three years that most people never see, and it costs me nothing a month to keep it running. It is a permanent email service, not a throwaway one: one account creates up to 100 email addresses on my own domain, and none of them expire. The idea is simple. Most of us hand the same address to every website we sign up for, and then wonder why the spam never stops. A different address for every site means you always know which site shared it, and you can stop using that address without changing your real email anywhere else.
 
 The first decision I made was receive-only. The service receives mail. It does not send it. That sounds like a limitation, and it is, but it is deliberate. Sending email is a different job from receiving it. A sending service has to fight spam filters, manage reputation, and deal with abuse, and one bad actor can get the whole domain blocked for everyone. Receiving is a smaller, cleaner problem: accept the message, store it, show it to the right account. Keeping the scope small is what has let one person operate the service for three years without it becoming a second job.
 
