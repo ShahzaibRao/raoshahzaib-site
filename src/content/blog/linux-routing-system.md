@@ -101,7 +101,7 @@ In the Linux kernel, routing tables are a core component of the networking subsy
 
 - **Purpose of Routing Tables**:
 
-  Routing tables store ***`routing rules`*** that determine the transmission path of packets. Each routing table contains a set of routing entries specifying the destination address, next hop, interface, and other related information.
+  Routing tables store `routing rules` that determine the transmission path of packets. Each routing table contains a set of routing entries specifying the destination address, next hop, interface, and other related information.
 
 - **Support for Multiple Routing Tables**:
 
@@ -125,93 +125,12 @@ From the diagram on the left, we can see that a Linux system has four routing ta
 - **Priority**: The `local` table has the highest priority, followed by `main`, and then `default` (as part of main). The `unspec` table is rarely involved in actual routing.
 - **Configuration File**: Routing table configurations are typically stored in `/etc/iproute2/rt_tables`, where new table names and IDs can be defined.
 
-<table header-row="true">
-<tr>
-<td>
-Routing Table
-</td>
-<td>
-ID
-</td>
-<td>
-Primary Purpose
-</td>
-<td>
-Priority
-</td>
-<td>
-Modifiable by User
-</td>
-</tr>
-<tr>
-<td>
-**local**
-</td>
-<td>
-255
-</td>
-<td>
-Local interface and loopback packets
-</td>
-<td>
-Highest
-</td>
-<td>
-System-managed
-</td>
-</tr>
-<tr>
-<td>
-**main**
-</td>
-<td>
-254
-</td>
-<td>
-General packet routing (incl. default)
-</td>
-<td>
-Medium
-</td>
-<td>
-User-configurable
-</td>
-</tr>
-<tr>
-<td>
-**default**
-</td>
-<td>
--
-</td>
-<td>
-Default route (within main table)
-</td>
-<td>
-Lowest
-</td>
-<td>
-User-configurable
-</td>
-</tr>
-<tr>
-<td>
-**unspec**
-</td>
-<td>
-0
-</td>
-<td>
-Unspecified, internal, or temporary use
-</td>
-<td>
-Lowest
-</td>
-<td>
-Rarely used
-</td>
-</tr>
-</table>
+| Routing Table | ID | Primary Purpose | Priority | Modifiable by User |
+| --- | --- | --- | --- | --- |
+| **local** | 255 | Local interface and loopback packets | Highest | System-managed |
+| **main** | 254 | General packet routing (incl. default) | Medium | User-configurable |
+| **default** | - | Default route (within main table) | Lowest | User-configurable |
+| **unspec** | 0 | Unspecified, internal, or temporary use | Lowest | Rarely used |
 
 ##### `local` routing table
 
@@ -629,7 +548,7 @@ ip_route_input_rcu(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 }
 ```
 
-**\[[net/ipv4/route.c](https://github.com/torvalds/linux/blob/v6.16/net/ipv4/route.c#L2347)\] function `ip_route_input_slow` → function `fib_validate_source_reason` **
+**\[[net/ipv4/route.c](https://github.com/torvalds/linux/blob/v6.16/net/ipv4/route.c#L2347)\] function `ip_route_input_slow` → function `fib_validate_source_reason`**
 
 ```c
 // https://github.com/torvalds/linux/blob/v6.16/net/ipv4/route.c#L2347-L2352

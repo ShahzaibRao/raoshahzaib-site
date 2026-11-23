@@ -18,8 +18,8 @@ In this piece, we will dive deeper into the impact of `conntrack` on Docker netw
 
 > We will explore the contributions of `conntrack` through three sub-experiments:
 
-> 1. Use the `nc` command to observe packet changes during TCP establishment and analyze the packet transitions during the **`three-way handshake`**** **an**d ****`four-way teardown`**.
-> 2. Use the `curl` command to observe packet changes during **`HTTP Requests`**** **and** ****`Responses`**.
+> 1. Use the `nc` command to observe packet changes during TCP establishment and analyze the packet transitions during the **`three-way handshake`** and **`four-way teardown`**.
+> 2. Use the `curl` command to observe packet changes during **`HTTP Requests`** and **`Responses`**.
 > 3. Remove conntrack rules to understand the impact of stateless connections.
 
 ![Diagram: Lab3 - How Linux Conntrack Determines Performance and Security in Docker Containers](/images/conntrack-docker-containers/01-conntrack-docker-containers.svg)
@@ -96,7 +96,7 @@ Traffic flow order:
 
 > If someone sends packets directly to **docker0** (from the external `network → `**`docker0`**), all of them will be **`DROP`**`ped`.
 
-> In other words, **`eth0 → docker0`** is not allowed. To access a container, traffic must pass through **`NAT`**** + ****`DNAT`** to enter.
+> In other words, **`eth0 → docker0`** is not allowed. To access a container, traffic must pass through **`NAT`** + **`DNAT`** to enter.
 
 **DOCKER-BRIDGE (Routing for traffic destined for docker0)**
 
@@ -106,7 +106,7 @@ Traffic flow order:
 
 > All traffic destined for **docker0** will jump to the **DOCKER** chain, where it is then matched against **inbound** rules.
 
-**DOCKER-CT (****Yellow Arrow****)**
+**DOCKER-CT (**Yellow Arrow**)**
 
 ```bash
 -A DOCKER-CT -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
@@ -127,10 +127,10 @@ Traffic flow order:
 **Key Functions**
 
 1. Performance Optimization: The "Fast Pass" Lane
-1. In the absence of this rule, every single packet entering a container (whether it's raw data or an acknowledgement) would have to be matched against the complex **`DOCKER`** chain rules (checking destination IP, TCP headers, Port 80, etc.).
-2. With this rule, as long as the initial **SYN** packet (the new connection) is permitted by the DOCKER chain, `conntrack` remembers the IP and port pair. Subsequent thousands of data packets are intercepted by this rule and "instantly released," bypassing complex rule checks and significantly saving CPU resources.
+   1. In the absence of this rule, every single packet entering a container (whether it's raw data or an acknowledgement) would have to be matched against the complex **`DOCKER`** chain rules (checking destination IP, TCP headers, Port 80, etc.).
+   2. With this rule, as long as the initial **SYN** packet (the new connection) is permitted by the DOCKER chain, `conntrack` remembers the IP and port pair. Subsequent thousands of data packets are intercepted by this rule and "instantly released," bypassing complex rule checks and significantly saving CPU resources.
 2. Allowing Return Traffic
-1. Firewalls are typically "one-way" by default. If you initiate a request from *inside* a container to the outside world (e.g., running `apk update` inside an Nginx container), the returning data packets will be recognized as **`ESTABLISHED`** or **`RELATED`** by this rule and automatically allowed through. Without it, the response packets would be blocked by the default FORWARD DROP policy.
+   1. Firewalls are typically "one-way" by default. If you initiate a request from *inside* a container to the outside world (e.g., running `apk update` inside an Nginx container), the returning data packets will be recognized as **`ESTABLISHED`** or **`RELATED`** by this rule and automatically allowed through. Without it, the response packets would be blocked by the default FORWARD DROP policy.
 
 **DOCKER-FORWARD (Docker-managed FORWARD chain)**
 
@@ -167,7 +167,7 @@ From the diagram on the left, we can conclude the following three things:
 #### Re-examining the Filter Table Rules
 
 ![Diagram: Re-examining the Filter Table Rules](/images/conntrack-docker-containers/05-conntrack-docker-containers.png)
-Next, let's examine the **`iptables`**** ****`filter`**** table** rules on **`box-1`** again. You will notice that a new rule (indicated by the red arrow in your diagram) has been added.
+Next, let's examine the **`iptables`** **`filter`** table rules on **`box-1`** again. You will notice that a new rule (indicated by the red arrow in your diagram) has been added.
 
 Rule Analysis
 
@@ -204,7 +204,7 @@ After establishing the connection, we observe the changes in packet counts acros
 
 - **`[3:172] -A FORWARD -j DOCKER-USER`**
 - **`[3:172] -A FORWARD -j DOCKER-FORWARD`**
-- **Analysis****:** We see **3 packets** here (typically the TCP three-way handshake: **SYN, SYN/ACK, and ACK**). Every packet first visits the `DOCKER-USER` chain (where users can set custom intercept rules) before proceeding to `DOCKER-FORWARD`.
+- **Analysis:** We see **3 packets** here (typically the TCP three-way handshake: **SYN, SYN/ACK, and ACK**). Every packet first visits the `DOCKER-USER` chain (where users can set custom intercept rules) before proceeding to `DOCKER-FORWARD`.
 
 **2. The Transit: DOCKER-FORWARD Chain**
 
@@ -217,21 +217,21 @@ Once inside, the packets pass through three sub-chains in sequence:
 - `[2:120]` packets flowed through here. It seems they did not trigger any specific blocking rules and continued downward.
 - **DOCKER-BRIDGE (Bridge to the DOCKER chain)**
 - `[2:120] -A DOCKER-BRIDGE -o docker0 -j DOCKER`
-- **Analysis****:** These **2 packets** (the initial **SYN** and the final **ACK** of the handshake) are directed to the critical `DOCKER` chain.
+- **Analysis:** These **2 packets** (the initial **SYN** and the final **ACK** of the handshake) are directed to the critical `DOCKER` chain.
 
 **3. The Destination: DOCKER Chain**
 
 - **`[1:60] -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT`**
-- **Analysis:** This rule precisely recorded **1 packet (60 bytes)**—this is the **`SYN`**** packet** (the very first connection request).
+- **Analysis:** This rule precisely recorded **1 packet (60 bytes)**—this is the **`SYN`** packet (the very first connection request).
 - **It was accepted because it matched all criteria:**
 1. **Destination**: The container's private IP (`172.17.0.2`).
 2. **Inbound**: It did *not* originate from `docker0` (meaning it came from an external source like box-02).
 3. **Service**: Targeted at Port **80**.
-- **Result****:** The packet was **`ACCEPTED`**, and the connection to the Nginx container was successful.
+- **Result:** The packet was **`ACCEPTED`**, and the connection to the Nginx container was successful.
 
 > **Why are the counts different?**
 
-> The rule in the **`DOCKER chain`** only captured 1 packet because only the **"****`first packet (NEW)`****"** of a connection initiation needs to undergo this complex inspection.
+> The rule in the **`DOCKER chain`** only captured 1 packet because only the "**`first packet (NEW)`**" of a connection initiation needs to undergo this complex inspection.
 
 > Once the connection is established, all subsequent packets are quickly released by the **`ESTABLISHED`** rule within **`DOCKER-CT`**. This explains why the **`DOCKER-CT`** chain also shows a packet count. This is a `performance optimization` mechanism.
 
@@ -253,61 +253,61 @@ Next, we terminate the **`nc`** command on **`box-2`** and observe the changes i
 Rules
 </td>
 <td>
-**Old (Packets:Bytes)**
+<b>Old (Packets:Bytes)</b>
 </td>
 <td>
-**New Count (Packets:Bytes)**
+<b>New Count (Packets:Bytes)</b>
 </td>
 <td>
-**Delta**
-</td>
-</tr>
-<tr>
-<td>
-**FORWARD (Entry)**
-</td>
-<td>
-\[3:172\]
-</td>
-<td>
-\[5:276\]
-</td>
-<td>
-**+2:104**
+<b>Delta</b>
 </td>
 </tr>
 <tr>
 <td>
-**DOCKER (80 port)**
-</td>
-<td></td>
-<td></td>
-<td>
-**+0:0**
-</td>
-</tr>
-<tr>
-<td>
-**DOCKER-CT (conntrack)**
-</td>
-<td></td>
-<td>
-\[2:104\]
+<b>FORWARD (Entry)</b>
 </td>
 <td>
-**+1:52**
+[3:172]
+</td>
+<td>
+[5:276]
+</td>
+<td>
+<b>+2:104</b>
 </td>
 </tr>
 <tr>
 <td>
-**-i docker0 (Return to kernel from container)**
+<b>DOCKER (80 port)</b>
+</td>
+<td></td>
+<td></td>
+<td>
+<b>+0:0</b>
+</td>
+</tr>
+<tr>
+<td>
+<b>DOCKER-CT (conntrack)</b>
 </td>
 <td></td>
 <td>
-\[2:112\]
+[2:104]
 </td>
 <td>
-**+1:52**
+<b>+1:52</b>
+</td>
+</tr>
+<tr>
+<td>
+<b>-i docker0 (Return to kernel from container)</b>
+</td>
+<td></td>
+<td>
+[2:112]
+</td>
+<td>
+<b>+1:52</b>
 </td>
 </tr>
 </table>
@@ -316,7 +316,7 @@ Rules
 
 From the statistics table above, we observe that only **`two packets`** pass through the **`FORWARD`** rule when a TCP connection is closed. However, wait a moment—doesn’t TCP connection termination rely on the 「**`TCP four-way handshake`** 」mechanism? If so, in theory, we should observe **`four packets`** instead.
 
-> The standard **TCP ****`four-way handshake`** for connection termination works as follows:
+> The standard **`TCP four-way handshake`** for connection termination works as follows:
 
 > - **Client → Server**: `FIN` (I want to close the connection)
 > - **Server → Client**: `ACK` (Acknowledged, but I’m still processing the remaining data)
@@ -355,7 +355,7 @@ listening on docker0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 - **iptables impact**: In theory, this should be the **`third packet`**, so why does your `iptables` counter only record **two**?
 - This is related to a subtle timing issue in how the Linux kernel handles **connection tracking (conntrack)**:
 - **Conntrack state transition**: When the second packet (the server’s `FIN/ACK`) passes through the firewall, the Linux kernel’s state machine typically marks the connection as `CLOSE_WAIT` or `LAST_ACK`.
-- **Counter classification**: In some kernel versions or configurations, once a connection has entered the final stage of teardown, the last pure `ACK` packet may **not be counted under the ****`ESTABLISHED`**** state statistics**, or it may already have been **garbage-collected by the conntrack subsystem** before `iptables-save` is executed.
+- **Counter classification**: In some kernel versions or configurations, once a connection has entered the final stage of teardown, the last pure `ACK` packet may **not be counted under the **`ESTABLISHED`** state statistics**, or it may already have been **garbage-collected by the conntrack subsystem** before `iptables-save` is executed.
 - **Your counter increments**:
 - **Packet 1 (incoming)**: Client `FIN` → `DOCKER-CT` (+1)
 - **Packet 2 (outgoing)**: Server `FIN/ACK` → `i docker0` (+1)
@@ -370,11 +370,11 @@ listening on docker0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 
 The biggest difference between using **`curl`** and **`nc`** is that `curl` performs a full **`HTTP request`** and **`response`** (data transfer), so the change in the number of bytes is much more significant than a simple TCP handshake.
 
-This time, by using the `curl` command, we not only establish a TCP connection but also retrieve the full content from the `nginx-server`. This allows us to observe the packet changes in the** ****`filter`**** **table during actual HTTP data transfer.
+This time, by using the `curl` command, we not only establish a TCP connection but also retrieve the full content from the `nginx-server`. This allows us to observe the packet changes in the **`filter`** table during actual HTTP data transfer.
 
 ![Diagram: 3.3 Let’s try the curl command](/images/conntrack-docker-containers/10-conntrack-docker-containers.png)
 
-The above figure shows a comparison of the **`filter`**** **table on `box-2` before and after executing the `curl` command from `box-1`
+The above figure shows a comparison of the **`filter`** table on `box-2` before and after executing the `curl` command from `box-1`
 
 We can observe that the **yellow line** increased by only **`1 packet`**, while the **blue line** increased by **`6 packets`**. Here’s the analysis:
 
@@ -385,7 +385,7 @@ We can observe that the **yellow line** increased by only **`1 packet`**, while 
 - **Conclusion**: Regardless of the webpage size `curl` fetches, this rule only counts once per new connection. It just “`opens the door`” and does not handle the subsequent data transfer
 - **Rule**: `-A DOCKER-CT -o docker0 -m conntrack--ctstate RELATED,ESTABLISHED -j ACCEPT`
 - This rule handles all subsequent packets of already established connections. In a single `curl` request, this includes:
-1. The 3rd packet of the TCP handshake** (****`ACK`****)**
+1. The 3rd packet of the TCP handshake (**`ACK`**)
 2. HTTP Request packet (the client’s GET request)
 3. Inbound packets during the TCP teardown
 - **Size analysis**: 392 bytes represents the combined size of the client’s HTTP header plus TCP control packets.
@@ -393,12 +393,12 @@ We can observe that the **yellow line** increased by only **`1 packet`**, while 
 - **Overall Inbound / Outbound Traffic Comparison**
 - Looking at `i docker0` (traffic leaving the container): \[9:1345\] - \[4:224\] = Increment \[+5:1121\]
 - **Key point**: The byte count increased significantly (**+1121 bytes**).
-- **Analysis**: These 1121 bytes are primarily the HTML content returned by Nginx** (****`HTTP Response`****)**. Since the response packets leave through `docker0`, they are counted under the rule: `DOCKER-FORWARD -i docker0 -j ACCEPT`
+- **Analysis**: These 1121 bytes are primarily the HTML content returned by Nginx (**`HTTP Response`**). Since the response packets leave through `docker0`, they are counted under the rule: `DOCKER-FORWARD -i docker0 -j ACCEPT`
 
 
 ### 4. Delete the **DOCKER-CT** chain (conntrack) from the filter table
 
-In this experiment, we will delete the** ****`DOCKER-CT conntrack rule`** and then try issuing a `curl` command from `box-2` to see whether the data can still be successfully retrieved.
+In this experiment, we will delete the **`DOCKER-CT conntrack rule`** and then try issuing a `curl` command from `box-2` to see whether the data can still be successfully retrieved.
 
 ```bash
 sudo iptables -t filter -D DOCKER-CT -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
@@ -406,7 +406,7 @@ sudo iptables -t filter -D DOCKER-CT -o docker0 -m conntrack --ctstate RELATED,E
 
 ![Diagram: 4. Delete the DOCKER-CT chain (conntrack) from the filter table](/images/conntrack-docker-containers/11-conntrack-docker-containers.png)
 
-From the figure above, we can see that after removing the** ****`conntrack`**** **fast path, `box-2` is still able to successfully retrieve data from the `nginx-server` container on `box-1`. However, what impact does this have?
+From the figure above, we can see that after removing the **`conntrack`** fast path, `box-2` is still able to successfully retrieve data from the `nginx-server` container on `box-1`. However, what impact does this have?
 
 - **Performance Degradation (CPU Overhead)**
 - **With conntrack**: The kernel recognizes the traffic as part of an established connection and allows it to pass immediately (very fast table lookup).
@@ -419,7 +419,7 @@ Even though the destination is restricted to `172.17.0.2:80`, the presence or ab
 - If a packet arrives with the `ACK` flag set but the firewall has never seen the corresponding `SYN`, it is treated as invalid and dropped.
 - This helps protect against **`TCP scans`** and **`certain types of DDoS attacks`**.
 - **Without conntrack (Stateless firewalling)**
-- The firewall only checks the **`destination IP`****, ****`protocol`****, **and** ****`port`**, which leads to several risks:
+- The firewall only checks the **`destination IP`**, **`protocol`**, and **`port`**, which leads to several risks:
 - **State spoofing attacks**: An attacker can send a large number of forged `ACK` packets. Although these packets will eventually be dropped by the container’s operating system (e.g., the Nginx kernel) because no matching socket exists, the “junk traffic” has already passed through the host firewall and entered the Docker virtual network, consuming host CPU resources and internal network bandwidth.
 - **Bypassing certain inspections**: Some **`Intrusion Detection Systems (IDS)`** rely on connection state to identify attacks. Without stateful inspection at the firewall level, attackers can more easily exploit **`fragmented packets`** to attempt to evade deeper inspection mechanisms.
 

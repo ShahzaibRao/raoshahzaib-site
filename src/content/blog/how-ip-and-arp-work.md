@@ -40,9 +40,9 @@ Within the same local area network (LAN), when a device knows the destination's 
 1. **ARP Request**
    - When Device A wants to communicate with Device B but only knows B’s IP address (e.g., 192.168.1.2), it `broadcasts` an **`ARP request`** packet to the local network.
    - The request packet includes:
-     - The sender’s IP and MAC addresses.
-     - The target IP address (e.g., 192.168.1.2).
-     - The target MAC address field is left blank (usually filled with all `zeros`).
+   - The sender’s IP and MAC addresses.
+   - The target IP address (e.g., 192.168.1.2).
+   - The target MAC address field is left blank (usually filled with all `zeros`).
    - This broadcast packet is received by all devices on the same subnet.
 2. **ARP Reply**
    - When Device B receives the ARP request and sees that the target IP matches its own, it sends back an **`ARP reply`** packet.
@@ -107,12 +107,12 @@ Here’s a breakdown of the steps shown in the left diagram:
    - This tests whether `ns1` can communicate with `ns2`.
 3. **Check the `ARP tables` in both `ns1` and `ns2` again:**
    - You will notice that `ns1`’s ARP table now contains a new entry with the following details:
-     1. **IP Address:** `10.22.33.55`
-        - This is the IPv4 address of the neighboring device, indicating your system recognizes that this IP is on the same network.
-     2. **Device:** `dev eth0`
-        - This means the system uses the `eth0` interface to communicate with `10.22.33.55`.
-     3. **Link Layer Address (MAC Address):** `lladdr 8a:0d:df:ba:d4:1f`
-        - This is the MAC address associated with the IP `10.22.33.55`, representing the physical address of the neighbor device.
+   1. **IP Address:** `10.22.33.55`
+   - This is the IPv4 address of the neighboring device, indicating your system recognizes that this IP is on the same network.
+   2. **Device:** `dev eth0`
+   - This means the system uses the `eth0` interface to communicate with `10.22.33.55`.
+   3. **Link Layer Address (MAC Address):** `lladdr 8a:0d:df:ba:d4:1f`
+   - This is the MAC address associated with the IP `10.22.33.55`, representing the physical address of the neighbor device.
 
 
 ### Experiment 2: Using tcpdump to Capture and Analyze How ICMP and ARP Work

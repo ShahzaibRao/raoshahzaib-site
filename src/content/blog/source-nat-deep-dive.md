@@ -8,17 +8,17 @@ By Rao Shahzaib · DevOps
 
 ## Key Takeaway
 
-> In this section, we’ll discuss the purpose of **Source NAT (SNAT)** and observe how SNAT affects our packets through three** **small experiments.
+> In this section, we’ll discuss the purpose of **Source NAT (SNAT)** and observe how SNAT affects our packets through three small experiments.
 
 ## Source NAT (SNAT)
 
 ### What is SNAT ?
 
-In the previous section (@6. Understanding the Relationship Between iptables, Docker, and Linux Bridge), we mentioned that **`iptables`**** **is a **user-space tool **that allows users to configure and interact with the **Linux kernel’s ****`Netfilter`**** system**.
+In the previous section (@6. Understanding the Relationship Between iptables, Docker, and Linux Bridge), we mentioned that **`iptables`** is a **user-space tool** that allows users to configure and interact with the **Linux kernel’s** **`Netfilter`** **system**.
 
-In common use cases, users employ iptables to define **`firewall rules`**** **or **`packet translation rules`**.
+In common use cases, users employ iptables to define **`firewall rules`** or **`packet translation rules`**.
 
-Among these, **`Source NAT (SNAT)`**** **is a feature implemented by Netfilter that modifies the **`source IP address or port`**** **of packets, allowing internal network hosts to communicate with external networks using a single public IP address.
+Among these, **`Source NAT (SNAT)`** is a feature implemented by Netfilter that modifies the **`source IP address or port`** of packets, allowing internal network hosts to communicate with external networks using a single public IP address.
 
 In other words, ***iptables provides the configuration interface, while the Netfilter subsystem in the Linux kernel actually performs the SNAT operation and packet transformation.***
 
@@ -63,11 +63,11 @@ When the source address is `192.168.1.0`, any packet sent out through the `eth0`
 ### Where does Source NAT take effect?
 
 ![Diagram: Where does Source NAT take effect?](/images/source-nat-deep-dive/01-source-nat-deep-dive.webp)
-From the diagram left, we can observe that **`SNAT`**** is located in the ****`POSTROUTING`**** chain**.
+From the diagram left, we can observe that **`SNAT`** **is located in the** **`POSTROUTING`** **chain**.
 
-However, if we take a closer look at the actual implementation inside the **`Linux kernel`**** (v6.16) **, we’ll notice something interesting.
+However, if we take a closer look at the actual implementation inside the **`Linux kernel`** **(v6.16)**, we’ll notice something interesting.
 
-In the **`Netfilter hooks`**, besides being able to modify the **source IP and port number **in the **`POSTROUTING`**** chain **, it’s also possible to perform such modifications in the **`INPUT`**** chain (****`NF_INET_LOCAL_IN`****) **— a detail that isn’t illustrated in the diagram on the left.
+In the **`Netfilter hooks`**, besides being able to modify the **source IP and port number** in the **`POSTROUTING`** **chain**, it’s also possible to perform such modifications in the **`INPUT`** **chain (** **`NF_INET_LOCAL_IN`** **)** — a detail that isn’t illustrated in the diagram on the left.
 
 
 **The Hooks of `SNAT` in Linux Kernel**
@@ -127,7 +127,7 @@ static struct xt_target xt_nat_target_reg[] __read_mostly = {
 
 **The Hooks of `MASQUERADE` in Linux Kernel**
 
-> The **`MASQUERADE`** target, on the other hand, is explicitly restricted to modifying the **IP address and port number** only within the **`POSTROUTING`**** chain**.
+> The **`MASQUERADE`** target, on the other hand, is explicitly restricted to modifying the **IP address and port number** only within the **`POSTROUTING`** **chain**.
 
 ```c
 https://github.com/torvalds/linux/blob/v6.16/net/netfilter/xt_MASQUERADE.c#L72-L96
@@ -166,7 +166,7 @@ Before conducting the experiment, we need to set up the environment as shown in 
 
 ![Diagram: Set Up the Experiment Environment](/images/source-nat-deep-dive/02-source-nat-deep-dive.svg)
 
-> This environment uses the **Ubuntu 24.04 server **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+> This environment uses the **Ubuntu 24.04 server** provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 > Reference: [https://labs.iximiuz.com/](https://labs.iximiuz.com/)
 
@@ -189,13 +189,13 @@ $ sudo docker run -d --name client busybox /bin/sh -c "sleep infinity"
 ```
 
 ![Diagram: Spin Up a Busybox Docker Container](/images/source-nat-deep-dive/03-source-nat-deep-dive.png)
-After successfully creating a Docker container named `client`, we can use the command `$ ip -c a` to view the current **network interfaces** (highlighted in orange in the left diagram), and `$ sudo iptables-save -t nat -c` to inspect the **rules in the ****`nat`**** table**.
+After successfully creating a Docker container named `client`, we can use the command `$ ip -c a` to view the current **network interfaces** (highlighted in orange in the left diagram), and `$ sudo iptables-save -t nat -c` to inspect the **rules in the** **`nat`** **table**.
 
 Among these, the **nat rules** we are particularly interested in are highlighted with a **blue underline** (`POSTROUTING`), which will be explained below.
 
 #### nat table explanation
 
-The explanation of the ***nat table***** rules** is as follows:
+The explanation of the ***nat table*** **rules** is as follows:
 
 - `PREROUTING`
   ```txt
@@ -220,7 +220,7 @@ The explanation of the ***nat table***** rules** is as follows:
 
 - **Meaning**:
 - Source IP is within the container subnet `172.17.0.0/16`
-- Packet’s outgoing interface is **not ****`docker0`**
+- Packet’s outgoing interface is **not** `docker0`
 - Apply **`MASQUERADE (SNAT)`** to rewrite the source IP to the host’s external IP.
 - **Counter** `[3:192]`: 3 packets (192 bytes) have already been **SNATed**.
 - **Purpose**: *Allows containers to access external networks, making their traffic appear as if it originates from the host itself.*
@@ -229,7 +229,7 @@ The explanation of the ***nat table***** rules** is as follows:
   [0:0] -A DOCKER -i docker0 -j RETURN
   ```
 
-- **Meaning**: If a packet **comes from ****`docker0`**, it is returned immediately without applying **DNAT**.
+- **Meaning**: If a packet **comes from** `docker0`, it is returned immediately without applying **DNAT**.
 - **Counter** `[0:0]`: No packets have triggered this rule yet.
 - **Purpose**: Prevent Docker’s own bridge network traffic from being mistakenly subjected to **DNAT**.
 
@@ -239,7 +239,7 @@ The explanation of the ***nat table***** rules** is as follows:
 
 ### 1.1 Use `nslookup` inside the container to query **google.com**
 
-> If a packet is leaving the host to the public network, **NAT rewrites its source to the host’s public IP **(this is the role of SNAT).
+> If a packet is leaving the host to the public network, **NAT rewrites its source to the host’s public IP** (this is the role of SNAT).
 
 > However, when observing the packet on **docker0**, you still see the container’s **private IP**.
 
@@ -250,11 +250,11 @@ Next, inside the container, we run `$ nslookup google.com` to query its IP addre
 
 From the results, we can observe the following from different perspectives:
 
-- **From the ****`docker0`**** bridge:**
+- **From the** **`docker0`** **bridge:**
 - `172.17.0.2`: Source IP (the container’s IP on the docker0 network)
 - `52739`: Source UDP ephemeral port used by the container to query the DNS server
 - `203.0.113.157:53`: Destination DNS server IP and port 53
-- **From host’s ****`eth0`****:**
+- **From host’s** **`eth0`** **:**
 - The source IP is no longer `172.17.0.2`; it has been rewritten to `172.16.0.2`, which is the IP of the host’s `eth0` interface
 - The port number remains the same (`52739`)
 
@@ -308,8 +308,8 @@ This shows **source port = 38851** and **destination port = 53**.
 ### 2.1 Remove the original **POSTROUTING’s** rule
 
 ![Diagram: 2.1 Remove the original POSTROUTING’s rule](/images/source-nat-deep-dive/07-source-nat-deep-dive.png)
-- **Step 1****:** Check the current **iptables ****`nat`**** table** rules. Identify the **POSTROUTING** rule (highlighted with a blue underline) that we want to remove.
-- **Step 2****:** Use the `D` option to delete the **POSTROUTING** rule. Then verify that it has been successfully removed.
+- **Step 1:** Check the current **iptables** **`nat`** **table** rules. Identify the **POSTROUTING** rule (highlighted with a blue underline) that we want to remove.
+- **Step 2:** Use the `D` option to delete the **POSTROUTING** rule. Then verify that it has been successfully removed.
 
 
 ### 2.2 Use `nslookup` inside the container to query **google.com**.
@@ -327,12 +327,12 @@ This causes the packets to leave the host successfully, but the ***return traffi
 ![Diagram: 2.3 Add a POSTROUTING rule with a specified port number range](/images/source-nat-deep-dive/09-source-nat-deep-dive.png)
 Next, we re-add the **POSTROUTING** rule, limiting the usable **port number range** to **55555–55600**.
 
-- **Step 1****:** Attempt to add the POSTROUTING rule.
+- **Step 1:** Attempt to add the POSTROUTING rule.
 - You may notice that the rule **cannot be added**, and `iptables` shows an error. The reason is:
 - **MASQUERADE** is essentially a **SNAT** (Source NAT).
 - When using the `-to-ports` option, `iptables` requires you to explicitly specify the **transport layer protocol** (TCP / UDP / SCTP / DCCP), because the concept of a "port" only exists for these protocols—not ICMP or others.
 - Your current rule does **not include a protocol match** (`p tcp` or `p udp`), so `iptables` does not know how to apply `-to-ports`.
-- **Step 2****:** Re-add the POSTROUTING rule, specifying that it only applies to the **UDP protocol**.
+- **Step 2:** Re-add the POSTROUTING rule, specifying that it only applies to the **UDP protocol**.
 
 ### 2.4 Run `nslookup google.com` **again inside the container**
 
@@ -343,8 +343,8 @@ We can successfully retrieve information for **google.com**.
 
 Observations:
 
-- On the **`docker0 bridge`**, the packet uses **source port ****`35077`**.
-- On `host’s `**`eth0`**, the packet shows **source port ****`55600`**, which falls within the **port range we specified**.
+- On the **`docker0 bridge`**, the packet uses **source port** `35077`.
+- On `host’s `**`eth0`**, the packet shows **source port** `55600`, which falls within the **port range we specified**.
 
 This demonstrates that when using **`MASQUERADE`** for ***dynamic port allocation***, the kernel correctly assigns a port that **respects the range we defined**.
 
@@ -366,8 +366,8 @@ Next, we try using the `--random` option instead of specifying a fixed port numb
 
 The two images above both show the results when using `--random`.
 
-- The **left image** corresponds to the **`first`**** nslookup** execution.
-- The **right image** corresponds to the **`second`**** nslookup** execution.
+- The **left image** corresponds to the **`first`** **nslookup** execution.
+- The **right image** corresponds to the **`second`** **nslookup** execution.
 
 We can see that when using `--random`, the **port numbers** observed on **`docker0`** and `host’s `**`eth0`** are completely randomized.
 

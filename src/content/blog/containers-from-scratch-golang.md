@@ -117,7 +117,7 @@ The UTS namespace (Unix Time-sharing System namespace) is a type of namespace us
 
 #### Why Do We Need to Modify the Container’s Hostname?
 
-In Linux, the hostname actually belongs to the **UTS namespace** (UNIX Time-sharing System namespace), which allows each container to have its ***own hostname and domain name.*
+In Linux, the hostname actually belongs to the **UTS namespace** (UNIX Time-sharing System namespace), which allows each container to have its ***own hostname and domain name***.
 
 - On the host machine, the `hostname` might be `prod-node-01`.
 - Inside a container, it can be set to `web-1`, `db-1`, or even a random UUID.
@@ -246,7 +246,7 @@ To ensure that users see the modified hostname immediately upon entering the con
 
 In practice, this is done using the `syscall.Sethostname` command to set the hostname to `baconyao-container`.
 
-Although the `run` function on the left allows us to set the hostname, this approach actually **violates the design principle of namespaces**. Linux’s UTS namespace requires that child processes be isolated from the parent process. If we set the hostname directly in the `run` function before executing the command, it will affect the parent process’s hostname, ***breaking the isolation principle.*
+Although the `run` function on the left allows us to set the hostname, this approach actually **violates the design principle of namespaces**. Linux’s UTS namespace requires that child processes be isolated from the parent process. If we set the hostname directly in the `run` function before executing the command, it will affect the parent process’s hostname, ***breaking the isolation principle***.
 
 Reference
 
@@ -352,6 +352,7 @@ Linux uses a global mount structure (maintained by the kernel), which can be vie
 
 - **Command:** `mount` or `cat /proc/mounts`
 - **Example output:**
+
   ```bash
   /dev/sda1 / ext4 rw,relatime 0 0
   /dev/sdb1 /mnt ext4 rw,relatime 0 0
@@ -369,7 +370,7 @@ In well-known container technologies like Docker, the `pivot_root` system call i
 
 ### Obtaining the Root Filesystem (rootfs)
 
-##### What is rootfs?
+#### What is rootfs?
 
 **rootfs** (root filesystem) is a directory structure of a filesystem that ***typically contains the minimal set of files and directories needed for an independent operating system environment***. It is a core component of containers or similar isolated environments, providing the filesystem view required for process execution. Rootfs usually simulates a complete OS filesystem but on a smaller scale, including essential libraries, executables, configuration files, and more.
 
@@ -579,8 +580,10 @@ func run() {
 	}
 
 	must(cmd.Run())
-}為了能達到 Process isolation，我們需透過 PID Namespace 達成目標。方法也非常的簡單，只需要在 run function 內加上 syscall.CLONE_NEWPID flag 就可以了。
+}
 ```
+為了能達到 Process isolation，我們需透過 PID Namespace 達成目標。方法也非常的簡單，只需要在 run function 內加上 syscall.CLONE_NEWPID flag 就可以了。
+
 To achieve process isolation, we need to use a **PID namespace**. The method is quite simple: just add the `syscall.CLONE_NEWPID` flag in the `run` function.
 
 
@@ -590,7 +593,7 @@ Let’s try running the container with the `syscall.CLONE_NEWPID` flag enabled.
 
 Now, inside the container environment, we can no longer see the host’s processes, and the initial process has `PID 1`.
 
-So far, we have successfully achieved ***process tree isolation.*
+So far, we have successfully achieved ***process tree isolation***.
 
 
 ## Step 4 - Dive Deep into Mount Namespace
@@ -700,7 +703,7 @@ So, what is **`Mount Propagation`**?
 
 正是由於 `mount propagation` 這個機制，儘管有使用 `CLONE_NEWNS` flag，在新的 mount point 建立時，它依然會繼承父 namespace 的掛載點樹狀結構，而且預設 propagation mode 是 **`shared`**。意味著 `child` namespace 裡的 `mount`/`unmount` 會**同步到 `parent` namespace**。所以在 `child` process 裡做的 `syscall.Mount("bacon", "baconyao_temp", "tmpfs", ...)`，也會出現在 `host` 的 mount list (`/proc/self/mounts` / `mount`)。
 
-Because of the **mount propagation** mechanism, even when using the `CLONE_NEWNS` flag, newly created mount points still inherit the parent namespace’s mount tree, and the default propagation mode is **`shared`**. This means that mount/unmount operations in the child namespace can ***propagate to the parent namespace.*
+Because of the **mount propagation** mechanism, even when using the `CLONE_NEWNS` flag, newly created mount points still inherit the parent namespace’s mount tree, and the default propagation mode is **`shared`**. This means that mount/unmount operations in the child namespace can ***propagate to the parent namespace***.
 
 Mount propagation defines the relationships between mount objects. The system uses these relationships to determine how mount or unmount events in one mount object affect other mount objects. There are several types of propagation relationships:
 
@@ -782,7 +785,7 @@ Secure, isolated mounts
 - **Slave (MS\_SLAVE)**
   - Propagation is **`unidirectional`**, meaning events only propagate from the master to the slave.
 - **Private (MS\_PRIVATE)**
-  - Mount and unmount events in different mount namespaces do ***not affect each other.*
+  - Mount and unmount events in different mount namespaces do ***not affect each other***.
 - **Unbindable (MS\_UNBINDABLE)**
   - Similar to private mounts, an unbindable mount ***cannot propagate events*** and also ***cannot be bound*** to other mount points.
 
@@ -807,7 +810,7 @@ You might see entries like `shared:1` or `shared:2`, which indicate that this mo
 
 **Method 2 – Using the `findmnt` command**
 
-From this, we can see that the root directory `/` is **shared**. Therefore, if no special configuration is applied, creating new mount points inside the container using a mount namespace will still ***propagate back to the host.*
+From this, we can see that the root directory `/` is **shared**. Therefore, if no special configuration is applied, creating new mount points inside the container using a mount namespace will still ***propagate back to the host***.
 
 ![Checking the Host Environment — screenshot](/images/containers-from-scratch-golang/20-screenshot-2025-08-26-1-44-44.png)
 
@@ -842,7 +845,7 @@ func child() {
 	must(syscall.Unmount("baconyao_temp", 0))
 }
 ```
-In the `child()` function, **before the child process performs `chroot`**, add the following code to set the host’s root directory `/` to **`MS_PRIVATE`**. Also, use `MS_REC` to apply this setting ***recursively to all submounts.*
+In the `child()` function, **before the child process performs `chroot`**, add the following code to set the host’s root directory `/` to **`MS_PRIVATE`**. Also, use `MS_REC` to apply this setting ***recursively to all submounts***.
 
 ```go
 	must(syscall.Mount("", "/", "", syscall.MS_REC|syscall.MS_PRIVATE, ""))
@@ -1110,7 +1113,7 @@ By simply adding `CLONE_NEWUSER` to the `Cloneflags` in the `run` function and c
 - **`GidMappings…`**
   - Set GID mapping: container’s GID 0 → your host GID.
 
-After this setup, a ***non-root program can have “fake root privileges”** inside the new user namespace:
+After this setup, a ***non-root program can have “fake root privileges”*** inside the new user namespace:
 
 - Inside the namespace, it appears as UID 0 (root), but this root actually maps to your unprivileged host UID.
 - Therefore, it has full privileges within the container but **cannot affect the host system**, preserving security.

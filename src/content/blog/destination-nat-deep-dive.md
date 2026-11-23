@@ -8,7 +8,7 @@ By Rao Shahzaib · DevOps
 
 ## Key Takeaway
 
-> In this section, we’ll discuss the purpose of Destination** NAT (DNAT)** and observe how DNAT affects our packets through a** **small experiment.
+> In this section, we’ll discuss the purpose of Destination **NAT (DNAT)** and observe how DNAT affects our packets through a small experiment.
 
 ## Destination NAT (DNAT)
 
@@ -18,7 +18,7 @@ In the previous chapter ([9. From Container to Internet: A Deep Dive into Source
 
 Now, when the network packet returns from the external network back to the host, how does the system know which container it should be delivered to?
 
-**`Destination NAT (DNAT)`** refers to modifying the **`destination IP`**** or ****`port`** of a packet when it enters the internal network (inbound traffic), allowing external requests to be directed to an internal host or service.
+**`Destination NAT (DNAT)`** refers to modifying the **`destination IP`** or **`port`** of a packet when it enters the internal network (inbound traffic), allowing external requests to be directed to an internal host or service.
 
 In other words, its purpose is:
 
@@ -212,7 +212,7 @@ With this rule, when you run `curl http://127.0.0.1:8080`, the request is actual
 
 In the upcoming experiment, we will need to perform a communication test between two machines.
 
-> This environment uses the **Ubuntu 24.04 server **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+> This environment uses the **Ubuntu 24.04 server** provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 > Reference: [https://labs.iximiuz.com/playgrounds/flexbox](https://labs.iximiuz.com/playgrounds/flexbox)
 
@@ -284,7 +284,7 @@ This demonstrates that the `docker0` bridge performs **DNAT translation** for us
 
 ![Diagram: Step 5. Check the rules in the nat table of iptables](/images/destination-nat-deep-dive/08-destination-nat-deep-dive.png)
 
-**`Rule 1`**** **
+**`Rule 1`**
 
 - `A PREROUTING`
 The rule is added to the **PREROUTING chain of the NAT table**. PREROUTING is processed **before the routing decision**, i.e., before the kernel decides whether to deliver the packet locally or forward it.
@@ -296,7 +296,7 @@ Matches packets whose **destination is considered 『LOCAL』** by the system, m
 If the above conditions are met, jump to the **DOCKER chain**, where Docker places DNAT rules to redirect packets to the container.
 **`Rule 2`**
 
-- Packet is **not from ****`docker0`** (i.e., comes from external network or the host itself)
+- Packet is **not from** `docker0` (i.e., comes from external network or the host itself)
 - Protocol is **TCP** and destination port is **12345**
 - Packet is **DNAT’ed** to `172.17.0.2:80`
 
@@ -306,7 +306,7 @@ In short, all packets hitting **host TCP port 12345** are redirected to the cont
 #### Actual Packet Flow
 
 1. An external client connects to the host’s (machine 1) public IP on port 12345 → the packet arrives at `eth0`.
-2. The kernel processes NAT rules in **PREROUTING**: `dst-type LOCAL` check confirms that the destination IP is **local **(because of** ****`docker0`**** **bridge), so the match succeeds.
+2. The kernel processes NAT rules in **PREROUTING**: `dst-type LOCAL` check confirms that the destination IP is **local** (because of **`docker0`** bridge), so the match succeeds.
 3. The packet jumps to the **DOCKER** chain, which contains `p tcp --dport 12345 -j DNAT --to-destination 172.17.0.2:80`. The packet is thus **DNAT’ed** to destination `172.17.0.2:80`.
 4. Routing is recalculated, and the packet is forwarded to `docker0` → enters **FORWARD** → delivered to the container.
 

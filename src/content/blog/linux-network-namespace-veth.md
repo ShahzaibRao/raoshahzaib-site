@@ -165,7 +165,7 @@ The image below shows two containers, each with its own network namespace presen
 
 ![Docker and Network Namespace — screenshot](/images/linux-network-namespace-veth/06-screenshot-2025-07-15-10-12-37.png)
 
-We can create symbolic links for the containers' network namespaces in `/var/run/netns`. By doing so, we can also ***`view`*** and ***`exec`*** the Docker containers’ namespaces using the `ip netns ...` commands
+We can create symbolic links for the containers' network namespaces in `/var/run/netns`. By doing so, we can also `view` and `exec` the Docker containers’ namespaces using the `ip netns ...` commands
 
 ![Docker and Network Namespace — screenshot](/images/linux-network-namespace-veth/07-screenshot-2025-07-15-10-14-17.png)
 

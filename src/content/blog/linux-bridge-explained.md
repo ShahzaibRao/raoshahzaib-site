@@ -16,7 +16,7 @@ With a Linux Bridge, communication becomes possible between isolated or independ
 
 ### Introduction
 
-A **`Linux Bridge` **is a `virtual` network device implemented within the Linux kernel that enables Layer 2 (Data Link Layer) packet forwarding between multiple network interfaces on the same host—similar to a physical switch.
+A **`Linux Bridge`** is a `virtual` network device implemented within the Linux kernel that enables Layer 2 (Data Link Layer) packet forwarding between multiple network interfaces on the same host—similar to a physical switch.
 
 It is primarily used to bridge different network interfaces—such as virtual machines, containers, or physical network interfaces—allowing them to communicate within the same Layer 2 broadcast domain.
 
@@ -61,34 +61,34 @@ The **`Forwarding Database (FDB)`** plays a key role in a Linux Bridge by keepin
 
   If no packets are received from a particular MAC address within this ageing time, the bridge considers the entry stale and removes it from the FDB to keep the table accurate and efficient.
 
-  - **How It Works:**
-    - When a bridge device (e.g., `br0`) receives a packet from an interface (e.g., `veth6`), it records the **source MAC address** and the **associated interface**, creating a dynamic FDB entry (e.g., `c6:e9:9b:3e:43:4a dev veth6 master br0`).
-    - Each dynamic entry has an **ageing timer**. If no packets are received from that MAC address within the ageing time, the entry is removed to prevent the FDB from being cluttered with stale data.
-    - The **`default` ageing time** is usually **`300 seconds` (5 minutes)**, but this value can be customized.
-  - **Why Ageing Time Matters**:
-    - **`Resource Efficiency`**: The FDB has limited capacity. Removing outdated entries conserves memory and system resources.
-    - **`Network Adaptability`**: Devices may change interfaces or MAC addresses (e.g., during a container restart). The ageing mechanism ensures the FDB reflects the current network topology.
-    - **`Avoiding Incorrect Forwarding`**: Keeping stale MAC entries could cause packets to be misrouted to interfaces that no longer exist or are inactive.
-  - **Impact**:
-    - For example, the dynamic entry `c6:e9:9b:3e:43:4a dev veth6 master br0 `will be subject to ageing. If no packets are sent or received via `veth6` during the ageing period, the entry may be removed.
-    - **Static entries** (marked as `permanent`, e.g., `e6:42:3e:0e:65:6b dev veth6 master br0 permanent`) are **not affected** by ageing time because they are manually configured or fixed by the system.
+- **How It Works:**
+  - When a bridge device (e.g., `br0`) receives a packet from an interface (e.g., `veth6`), it records the **source MAC address** and the **associated interface**, creating a dynamic FDB entry (e.g., `c6:e9:9b:3e:43:4a dev veth6 master br0`).
+  - Each dynamic entry has an **ageing timer**. If no packets are received from that MAC address within the ageing time, the entry is removed to prevent the FDB from being cluttered with stale data.
+  - The **`default` ageing time** is usually **`300 seconds` (5 minutes)**, but this value can be customized.
+- **Why Ageing Time Matters**:
+  - **`Resource Efficiency`**: The FDB has limited capacity. Removing outdated entries conserves memory and system resources.
+  - **`Network Adaptability`**: Devices may change interfaces or MAC addresses (e.g., during a container restart). The ageing mechanism ensures the FDB reflects the current network topology.
+  - **`Avoiding Incorrect Forwarding`**: Keeping stale MAC entries could cause packets to be misrouted to interfaces that no longer exist or are inactive.
+- **Impact**:
+  - For example, the dynamic entry `c6:e9:9b:3e:43:4a dev veth6 master br0 `will be subject to ageing. If no packets are sent or received via `veth6` during the ageing period, the entry may be removed.
+  - **Static entries** (marked as `permanent`, e.g., `e6:42:3e:0e:65:6b dev veth6 master br0 permanent`) are **not affected** by ageing time because they are manually configured or fixed by the system.
 
   ### **How to Prevent or Extend Ageing Time**
 
-  1. **Increase the Ageing Time**
-     1. Extend the duration before dynamic entries expire.
-        1. `echo 60000 > /sys/class/net/br0/bridge/ageing_time`
-        2. `ip link set br0 type bridge ageing_time 600`
-  2. **Convert Dynamic Entries to Static (Permanent)**
-     1. Prevent specific MAC entries from being aged out. Manually set a MAC address as **permanent**:
-        1. `bridge fdb add c6:e9:9b:3e:43:4a dev veth6 master permanent`
-           1. Note: If the entry already exists as dynamic, you may need to delete it first before adding it as permanent.
-  3. **Maintain Network Activity**
-     1. Keep sending traffic through the interface periodically to reset the ageing timer and keep dynamic entries active.
-  4. **Disable the Ageing Mechanism**
-     1. Stop ageing entirely by setting the ageing time to `0`.
-        1. `echo 0 > /sys/class/net/br0/bridge/ageing_time`
-        2. `ip link set br0 type bridge ageing_time 0`
+1. **Increase the Ageing Time**
+   1. Extend the duration before dynamic entries expire.
+   1. `echo 60000 > /sys/class/net/br0/bridge/ageing_time`
+   2. `ip link set br0 type bridge ageing_time 600`
+2. **Convert Dynamic Entries to Static (Permanent)**
+   1. Prevent specific MAC entries from being aged out. Manually set a MAC address as **permanent**:
+   1. `bridge fdb add c6:e9:9b:3e:43:4a dev veth6 master permanent`
+   1. Note: If the entry already exists as dynamic, you may need to delete it first before adding it as permanent.
+3. **Maintain Network Activity**
+   1. Keep sending traffic through the interface periodically to reset the ageing timer and keep dynamic entries active.
+4. **Disable the Ageing Mechanism**
+   1. Stop ageing entirely by setting the ageing time to `0`.
+   1. `echo 0 > /sys/class/net/br0/bridge/ageing_time`
+   2. `ip link set br0 type bridge ageing_time 0`
 
 #### **Structure of the FDB**
 

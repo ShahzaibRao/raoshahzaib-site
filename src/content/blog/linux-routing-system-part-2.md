@@ -26,7 +26,7 @@ The architectural diagram is shown below.
 
 ### Experimental Environment Setup
 
-This environment uses the **Ubuntu 24.04 server **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+This environment uses the **Ubuntu 24.04 server** provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 Reference: [https://labs.iximiuz.com/](https://labs.iximiuz.com/)
 
@@ -178,7 +178,7 @@ The architectural diagram is as follows.
 
 ### Experimental Environment Setup
 
-This environment uses the **Ubuntu 24.04 server **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+This environment uses the **Ubuntu 24.04 server** provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 Reference: [https://labs.iximiuz.com/](https://labs.iximiuz.com/)
 

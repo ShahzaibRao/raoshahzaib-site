@@ -8,13 +8,13 @@ By Rao Shahzaib · DevOps
 
 ## What Is Connection Tracking?
 
-> **`Conntrack`**, short for **`connection tracking`**, is a core feature of the Linux kernel’s **`Netfilter`**** subsystem**.
+> **`Conntrack`**, short for **`connection tracking`**, is a core feature of the Linux kernel’s **`Netfilter` subsystem**.
 
-> It records and manages the state of every network connection and data flow, enabling the kernel to understand whether a packet belongs to a new, established, or related connection. This mechanism is fundamental for implementing **`stateful firewalls`**** **and **`Network Address Translation (NAT)`**** **, forming the backbone of many higher-level networking systems such as container networking and Kubernetes Services.
+> It records and manages the state of every network connection and data flow, enabling the kernel to understand whether a packet belongs to a new, established, or related connection. This mechanism is fundamental for implementing **`stateful firewalls`** and **`Network Address Translation (NAT)`**, forming the backbone of many higher-level networking systems such as container networking and Kubernetes Services.
 
 ### Connection Tracking Table
 
-A table maintained by the Linux kernel that records the state and NAT mappings of each *`flow`** *based on the five-tuple (`src IP`, `dst IP`, `src port`, `dst port`, `protocol`). Each record in this table is called an **`entry`**** **. Conntrack continuously maintains this table and uses it to determine which existing connection each packet belongs to.
+A table maintained by the Linux kernel that records the state and NAT mappings of each *`flow`* based on the five-tuple (`src IP`, `dst IP`, `src port`, `dst port`, `protocol`). Each record in this table is called an **`entry`**. Conntrack continuously maintains this table and uses it to determine which existing connection each packet belongs to.
 
 - Common connection states (`ctstate`):
 - `NEW`: The first packet of a flow (no existing entry).
@@ -30,14 +30,14 @@ A table maintained by the Linux kernel that records the state and NAT mappings o
 
 In previous sections (<https://app.notion.com/p/2938a3a7d9d480dabef2d90afcd4cc54> ), we examined `iptables` rules extensively to understand which packets are forwarded, accepted by the host, or dropped.
 
-However, if we rely **only on ****`iptables`**** rules** (for example, a simple rule like `iptables -A INPUT -p tcp --dport 22 -j ACCEPT`), each packet is evaluated independently — `iptables` has no memory of past packets.
+However, if we rely **only on `iptables` rules** (for example, a simple rule like `iptables -A INPUT -p tcp --dport 22 -j ACCEPT`), each packet is evaluated independently — `iptables` has no memory of past packets.
 
-This means the kernel cannot determine whether a packet is ***part of an existing connection**** *or simply a ***new incoming request***. As a result, it becomes difficult to distinguish between **new packets** and **response packets**.
+This means the kernel cannot determine whether a packet is ***part of an existing connection*** or simply a ***new incoming request***. As a result, it becomes difficult to distinguish between **new packets** and **response packets**.
 
 #### With the Help of Conntrack
 
-- The kernel can identify packets that belong to an **`ESTABLISHED`**** connection**.
-- It can recognize **`NEW`**** connections**.
+- The kernel can identify packets that belong to an **`ESTABLISHED` connection**.
+- It can recognize **`NEW` connections**.
 - And it can also track packets that are **`RELATED`** to existing connections (for example, responses or auxiliary connections).
 
 With this information, firewall rules can be written in a simpler and safer way like below.
@@ -49,7 +49,7 @@ iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 ### Deep Dive into ctstate
 
-`ctstate` is the **packet state label** exposed by the conntrack module in **`iptables`**** / ****`nftables`**.
+`ctstate` is the **packet state label** exposed by the conntrack module in **`iptables` / `nftables`**.
 
 It allows you to match packets based on the **state of a conntrack entry (connection state)**, which can be used to determine whether to accept, drop, or modify the packet.
 
@@ -83,7 +83,7 @@ Common Usage
 `NEW`
 </td>
 <td>
-This packet is the **first packet of the connection**. The system sees this five-tuple (src/dst IP, port, protocol) for the first time.
+This packet is the <b>first packet of the connection</b>. The system sees this five-tuple (src/dst IP, port, protocol) for the first time.
 </td>
 <td>
 TCP SYN, first UDP packet
@@ -97,7 +97,7 @@ Control which ports can be initiated from outside
 `ESTABLISHED`
 </td>
 <td>
-There has been **bidirectional traffic**. Conntrack has confirmed the connection is established.
+There has been <b>bidirectional traffic</b>. Conntrack has confirmed the connection is established.
 </td>
 <td>
 TCP handshake completed, UDP responses received
@@ -111,7 +111,7 @@ Allow response packets
 `RELATED`
 </td>
 <td>
-A connection that is **related to an existing connection**. Usually generated by conntrack helpers.
+A connection that is <b>related to an existing connection</b>. Usually generated by conntrack helpers.
 </td>
 <td>
 FTP data channel, ICMP error
@@ -125,7 +125,7 @@ Allow FTP, ICMP, ALG, and other derived connections
 `INVALID`
 </td>
 <td>
-The packet **cannot be associated with any known connection** and is not a new connection.
+The packet <b>cannot be associated with any known connection</b> and is not a new connection.
 </td>
 <td>
 Invalid TCP flags, unexpected replies
@@ -139,7 +139,7 @@ Should be dropped
 `UNTRACKED`
 </td>
 <td>
-Packets **not tracked by the conntrack module**.
+Packets <b>not tracked by the conntrack module</b>.
 </td>
 <td>
 Explicitly set with `-j NOTRACK`
@@ -289,11 +289,11 @@ When a packet enters the Linux kernel network stack (for example, passing throug
 #### 2. Lookup or Create a Conntrack Entry
 
 - **If the packet does not belong to any existing connection**:
-Conntrack creates a new connection tracking entry based on the packet's five-tuple (`src IP`, `dst IP`, `src port`, `dst port`, `protocol`) and marks it with the `NEW` state.
+  Conntrack creates a new connection tracking entry based on the packet's five-tuple (`src IP`, `dst IP`, `src port`, `dst port`, `protocol`) and marks it with the `NEW` state.
 - **If it belongs to an existing connection**:
-Conntrack updates the entry’s state (for example, from `SYN_SENT → ESTABLISHED`) and resets the timeout.
+  Conntrack updates the entry’s state (for example, from `SYN_SENT → ESTABLISHED`) and resets the timeout.
 - **If the connection is idle for a long time**:
-The entry is removed according to protocol-defined timeouts (e.g., TCP, UDP).
+  The entry is removed according to protocol-defined timeouts (e.g., TCP, UDP).
 
 You can view all currently tracked connections using command `sudo conntrack -L`
 
@@ -315,7 +315,7 @@ When packets are processed and leave the network interface (or enter user space)
 
 ### Environment Setup
 
-> This environment uses the Docker Server** **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+> This environment uses the Docker Server provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 > Reference: [https://labs.iximiuz.com/playgrounds/docker](https://labs.iximiuz.com/playgrounds/docker)
 
@@ -402,7 +402,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Source (client)**
+<b>Source (client)</b>
 </td>
 <td>
 172.16.0.1:45536
@@ -410,7 +410,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Destination (server)**
+<b>Destination (server)</b>
 </td>
 <td>
 172.16.0.2:40060
@@ -418,7 +418,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**State**
+<b>State</b>
 </td>
 <td>
 Established TCP connection
@@ -426,7 +426,7 @@ Established TCP connection
 </tr>
 <tr>
 <td>
-**Role Determination**
+<b>Role Determination</b>
 </td>
 <td>
 172.16.0.1 is the client, 172.16.0.2 is the server
@@ -434,7 +434,7 @@ Established TCP connection
 </tr>
 <tr>
 <td>
-**Probable Usage**
+<b>Probable Usage</b>
 </td>
 <td>
 Likely an internal RPC, health check, or gRPC connection between containers or local services
@@ -442,7 +442,7 @@ Likely an internal RPC, health check, or gRPC connection between containers or l
 </tr>
 <tr>
 <td>
-**Status**
+<b>Status</b>
 </td>
 <td>
 `[ASSURED]` → Three-way handshake completed; bidirectional communication is stable
@@ -471,7 +471,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Source (client)**
+<b>Source (client)</b>
 </td>
 <td>
 172.16.0.1:40968
@@ -479,7 +479,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Destination (server)**
+<b>Destination (server)</b>
 </td>
 <td>
 172.16.0.2:22
@@ -487,7 +487,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**State**
+<b>State</b>
 </td>
 <td>
 Established SSH connection
@@ -495,7 +495,7 @@ Established SSH connection
 </tr>
 <tr>
 <td>
-**Role**
+<b>Role</b>
 </td>
 <td>
 172.16.0.1 is the initiator (SSH client), 172.16.0.2 is the server (SSH daemon)
@@ -503,7 +503,7 @@ Established SSH connection
 </tr>
 <tr>
 <td>
-**Actual Scenario**
+<b>Actual Scenario</b>
 </td>
 <td>
 This connection corresponds to your current SSH session on this machine
@@ -511,7 +511,7 @@ This connection corresponds to your current SSH session on this machine
 </tr>
 <tr>
 <td>
-**Status**
+<b>Status</b>
 </td>
 <td>
 `[ASSURED]` indicates that the connection is normal and data is being transmitted stably
@@ -540,7 +540,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Source**
+<b>Source</b>
 </td>
 <td>
 localhost:34364
@@ -548,7 +548,7 @@ localhost:34364
 </tr>
 <tr>
 <td>
-**Destination**
+<b>Destination</b>
 </td>
 <td>
 localhost:22
@@ -556,7 +556,7 @@ localhost:22
 </tr>
 <tr>
 <td>
-**State**
+<b>State</b>
 </td>
 <td>
 Established connection
@@ -564,7 +564,7 @@ Established connection
 </tr>
 <tr>
 <td>
-**Role**
+<b>Role</b>
 </td>
 <td>
 Local client connecting to the SSH server via loopback
@@ -572,7 +572,7 @@ Local client connecting to the SSH server via loopback
 </tr>
 <tr>
 <td>
-**Actual Scenario**
+<b>Actual Scenario</b>
 </td>
 <td>
 Possibly `ssh localhost`, or an internal SSH tunnel created by a management process (e.g., monitoring agent, port forwarding)
@@ -580,7 +580,7 @@ Possibly `ssh localhost`, or an internal SSH tunnel created by a management proc
 </tr>
 <tr>
 <td>
-**Status**
+<b>Status</b>
 </td>
 <td>
 `[ASSURED]` → Bidirectional data transfer completed; connection is stable
@@ -609,7 +609,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Source (client)**
+<b>Source (client)</b>
 </td>
 <td>
 172.16.0.1:39536
@@ -617,7 +617,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**Destination (server)**
+<b>Destination (server)</b>
 </td>
 <td>
 172.16.0.2:40059
@@ -625,7 +625,7 @@ Analysis
 </tr>
 <tr>
 <td>
-**State**
+<b>State</b>
 </td>
 <td>
 Established internal TCP connection
@@ -633,7 +633,7 @@ Established internal TCP connection
 </tr>
 <tr>
 <td>
-**Probable Usage**
+<b>Probable Usage</b>
 </td>
 <td>
 Similar to the first connection; likely gRPC or control communication between multiple service threads or containers
@@ -641,7 +641,7 @@ Similar to the first connection; likely gRPC or control communication between mu
 </tr>
 <tr>
 <td>
-**Status**
+<b>Status</b>
 </td>
 <td>
 `[ASSURED]` indicates the connection is stable and continuously in use
@@ -666,16 +666,16 @@ $ sudo docker run -d --name client alpine/curl:8.14.1 /bin/sh -c "sleep infinity
 ### 2. Observing Traffic While Accessing google.com with curl
 
 ![Diagram: 2. Observing Traffic While Accessing google.com with curl](/images/linux-conntrack-introduction/02-linux-conntrack-introduction.png)
-- **Step 1****:** Enter the `client` container.
-- **Step 2****:** On the host, use `tcpdump` to monitor the `docker0` bridge.
-- **Step 3****:** On the host, list all current `conntrack` entries.
-- **Step 4****:** On the host, use the `E` option to monitor changes in `conntrack`.
-- **Step 5****:** Inside the `client` container, run `curl google.com` to fetch information.
+- **Step 1:** Enter the `client` container.
+- **Step 2:** On the host, use `tcpdump` to monitor the `docker0` bridge.
+- **Step 3:** On the host, list all current `conntrack` entries.
+- **Step 4:** On the host, use the `E` option to monitor changes in `conntrack`.
+- **Step 5:** Inside the `client` container, run `curl google.com` to fetch information.
 
 
 ### 3. Packet Flow Analysis
 
-**tcpdump of ****`docker0`**
+**tcpdump of `docker0`**
 
 ```bash
 laborant@docker-01:~$ sudo tcpdump -vvvvln -i docker0
@@ -751,7 +751,7 @@ ength 0
 18:07:13.116316 ARP, Ethernet (len 6), IPv4 (len 4), Reply 172.17.0.2 is-at de:ae:17:4a:58:a0, length 28
 ```
 
-**l**og of ****`conntrack`**
+**Log of `conntrack`**
 
 ```bash
 laborant@docker-01:~$ sudo conntrack -L
@@ -796,7 +796,7 @@ Role
 </tr>
 <tr>
 <td>
-**Container**
+<b>Container</b>
 </td>
 <td>
 172.17.0.2
@@ -807,7 +807,7 @@ Initiates `curl google.com`
 </tr>
 <tr>
 <td>
-**docker0 bridge**
+<b>docker0 bridge</b>
 </td>
 <td>
 172.17.0.1
@@ -818,7 +818,7 @@ Gateway for the container
 </tr>
 <tr>
 <td>
-**Host eth0**
+<b>Host eth0</b>
 </td>
 <td>
 172.16.0.2
@@ -829,7 +829,7 @@ Physical network interface connecting to external networks
 </tr>
 <tr>
 <td>
-**DNS server**
+<b>DNS server</b>
 </td>
 <td>
 203.0.113.161
@@ -840,7 +840,7 @@ Specified in the container's `/etc/resolv.conf`
 </tr>
 <tr>
 <td>
-**Google Web Server**
+<b>Google Web Server</b>
 </td>
 <td>
 203.0.113.78
@@ -993,23 +993,23 @@ Meanwhile, the host’s **conntrack table** performs **DNAT**, changing the dest
 **3.2.4 HTTP Connection Flow (TCP Handshake and Request)**
 
 - **3.2.4.1**
-- The `curl` command initiates a TCP connection:
+  - The `curl` command initiates a TCP connection:
     ```bash
     172.17.0.2.39882 > 203.0.113.78.80: Flags [S]
     ```
 
-This is the SYN packet from the container to Google. The host performs **SNAT**, translating it to:
+    This is the SYN packet from the container to Google. The host performs **SNAT**, translating it to:
 
     ```bash
     172.16.0.2.39882 > 203.0.113.78.80
     ```
 - **3.2.4.2**
-- The external Google server responds:
+  - The external Google server responds:
     ```bash
     203.0.113.78.80 > 172.16.0.2.39882: Flags [S.]
     ```
 
-When the host receives it, **DNAT** translates the destination back to the container:
+    When the host receives it, **DNAT** translates the destination back to the container:
 
     ```bash
     203.0.113.78.80 > 172.17.0.2.39882
@@ -1092,7 +1092,7 @@ Because **`conntrack`** handles **NAT caching**, after the first packet creates 
 → [src=172.16.0.2:39882 dst=203.0.113.78:80]
 ```
 
-- Subsequent packets (in the same connection) bypass the rule and are translated via **conntrack ****`fast-path`**** NAT**.
+- Subsequent packets (in the same connection) bypass the rule and are translated via **conntrack `fast-path` NAT**.
 - Therefore, the iptables counter only increments **on the first NAT trigger**.
 
 ## Experiment 2 – How SNAT Port Range Affects TCP/UDP Connections
@@ -1187,8 +1187,8 @@ conntrack v1.4.8 (conntrack-tools): 4 flow entries have been shown.
 ![Diagram: 1. Adjusting NAT Rules in iptables](/images/linux-conntrack-introduction/04-linux-conntrack-introduction.png)
 We modify the SNAT rule in the `POSTROUTING` chain (shown in the left figure) to limit the range of ports available for SNAT.
 
-- **Step 1****:** Remove the existing SNAT rule.
-- **Step 2****:** Add two new SNAT rules that only allow TCP and UDP packets from `docker0` to be SNATed, and restrict them to ports **4999** and **5000**.
+- **Step 1:** Remove the existing SNAT rule.
+- **Step 2:** Add two new SNAT rules that only allow TCP and UDP packets from `docker0` to be SNATed, and restrict them to ports **4999** and **5000**.
 
 With this configuration, at most ***two simultaneous SNAT mappings*** can exist.
 
@@ -1198,10 +1198,10 @@ With this configuration, at most ***two simultaneous SNAT mappings*** can exist.
 After configuring the iptables NAT rules, we will run multiple `curl` commands and observe the entries in conntrack.
 
 ![Diagram: 2. Repeated Connections and curl Stalling Analysis](/images/linux-conntrack-introduction/05-linux-conntrack-introduction.png)
-- **Step 1****:** First, run a `curl google.com` command inside the container.
-- **Step 2****:** Check the contents of `conntrack`. You will see that two connections are established: one `UDP` and one `TCP`.
-- **Step 3****:** Run `curl` multiple times. You will notice that it hangs and fails to retrieve data.
-- **Step 4****:** Check `conntrack` again. We observe that the `TCP` and `UDP` connections have already used the destination ports **4999** and **5000**. Since we previously limited the range of ports available for SNAT, the reply packets from the external server can only be mapped to these two SNAT ports.
+- **Step 1:** First, run a `curl google.com` command inside the container.
+- **Step 2:** Check the contents of `conntrack`. You will see that two connections are established: one `UDP` and one `TCP`.
+- **Step 3:** Run `curl` multiple times. You will notice that it hangs and fails to retrieve data.
+- **Step 4:** Check `conntrack` again. We observe that the `TCP` and `UDP` connections have already used the destination ports **4999** and **5000**. Since we previously limited the range of ports available for SNAT, the reply packets from the external server can only be mapped to these two SNAT ports.
 
 
 ![Diagram: 2. Repeated Connections and curl Stalling Analysis](/images/linux-conntrack-introduction/06-linux-conntrack-introduction.png)

@@ -39,17 +39,17 @@ The game proceeds according to the following steps (1–4):
 - P1–P4 take turns to name themselves.
 - The deck is shuffled.
 - Card Drawing Phase
-- Starting from P1, players P1–P4 take turns drawing cards from the deck until each player has 13 cards in hand.
+  - Starting from P1, players P1–P4 take turns drawing cards from the deck until each player has 13 cards in hand.
 - Playing Rounds
-- After all cards are drawn, the game continues for 13 rounds. In each round, the following steps are executed in order:
+  - After all cards are drawn, the game continues for 13 rounds. In each round, the following steps are executed in order:
 - P1–P4 take turns, and for each player:
-- Decide whether to use the “Exchange Hands” privilege (see Requirement 5).
-- Play (show) one card (at this step, players do not know what cards the others have played).
-- Reveal the cards played by P1–P4.
-- Compare the played cards to determine the winner, and award 1 point to the winning player.
+  - Decide whether to use the “Exchange Hands” privilege (see Requirement 5).
+  - Play (show) one card (at this step, players do not know what cards the others have played).
+  - Reveal the cards played by P1–P4.
+  - Compare the played cards to determine the winner, and award 1 point to the winning player.
 - Game End
-- After 13 rounds, all players will have played all their cards and the game ends.
-- The player with the highest score is declared the winner, and the winner’s name is displayed.
+  - After 13 rounds, all players will have played all their cards and the game ends.
+  - The player with the highest score is declared the winner, and the winner’s name is displayed.
 
 **Card Comparison Rules**
 

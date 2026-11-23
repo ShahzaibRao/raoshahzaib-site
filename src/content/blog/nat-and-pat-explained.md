@@ -41,7 +41,7 @@ When we initiate a ping from `ns1` to Google DNS, the ICMP Request packet travel
 ![Diagram: ICMP Echo Request 2 - br0 to wan (203.0.113.12)](/images/nat-and-pat-explained/04-nat-and-pat-explained.svg)
 Next, as the packet travels from `br0` to the host’s `eth0`, this segment is handled within the same kernel network namespace, so it can be considered internal kernel processing.
 
-For the segment from the host’s `eth0` to a machine in the WAN, **assuming no additional mechanisms or external assistance**, the ICMP packet’s **`Source`** and **`Destination IP addresses`**** remain unchanged**. This ensures that the packet knows where to send the reply. What does change, however, is the **MAC address**.
+For the segment from the host’s `eth0` to a machine in the WAN, **assuming no additional mechanisms or external assistance**, the ICMP packet’s **`Source`** and **`Destination IP addresses`** **remain unchanged**. This ensures that the packet knows where to send the reply. What does change, however, is the **MAC address**.
 
 
 #### ICMP Echo Request 3 - `wan (203.0.113.123)`  to Google DNS
@@ -71,7 +71,7 @@ This is a good idea, but…
 
 - **How can we modify the Source IP address of the ICMP Request packet?**
 - **Who has the ability to perform this modification?**
-- **How can we keep track of these changes so that the ICMP Reply packet arriving at the host can be correctly updated back to the original ****`ns1`**** IP?**
+- **How can we keep track of these changes so that the ICMP Reply packet arriving at the host can be correctly updated back to the original** **`ns1`** **IP?**
 
 ## **Network Address Translation (NAT)**
 
@@ -150,7 +150,7 @@ These four concepts ultimately form four possible combinations, as shown below.
 
 > Devices determines actual POST-translation `IP address` and `Port`<br /><br />Ref: [Dynamic PAT - Network Address Translation](https://youtu.be/2t8-WRZWCq8?si=_BAoUuOxSEh2HIQQ)
 
-- **`Many-to-One`**** or ****`One-to-Many`**** Translation**
+- **`Many-to-One`** or **`One-to-Many`** **Translation**
 - Multiple internal private IPs can share a single public IP.
 - Sometimes referred to as **“Many to One”** or **“One to Many”**:
 - **Many to One**: From the internal network’s perspective toward the router, many internal devices map to a single shared public IP on the router.
@@ -190,7 +190,7 @@ These four concepts ultimately form four possible combinations, as shown below.
 - Lazy Static NAT
 - But only if the number of hosts is equal to the number of Public IP addresses in translation
 - **Non deterministic IP assignments**
-- **Dynamic NAT** is a **many-to-many** or **one-to-one mapping from a ****`limited IP pool`**
+- **Dynamic NAT** is a **many-to-many** or **one-to-one mapping from a** **`limited IP pool`**
 - Internal private IPs require a temporary public IP to access the Internet.
 - The NAT router assigns an available public IP from the IP pool.
 - The mapping is temporary; the public IP may be released once the connection ends.
@@ -207,7 +207,7 @@ These four concepts ultimately form four possible combinations, as shown below.
 
 The following four NAT types typically appear in **PAT (Port Address Translation)** scenarios. Since PAT is inherently a **many-to-one** or **one-to-many** NAT, it allows multiple internal devices to share a single public IP while distinguishing connections via different ports. These NAT types describe how the router handles port mappings and external connection restrictions:
 
-- **`Full-Cone`****, ****`Address-Restricted`****, **and** ****`Port-Restricted NAT`** use fixed mappings (a single public IP:port corresponds to an internal IP:port) but differ in the level of access restriction.
+- **`Full-Cone`**, **`Address-Restricted`**, and **`Port-Restricted NAT`** use fixed mappings (a single public IP:port corresponds to an internal IP:port) but differ in the level of access restriction.
 - **`Symmetric NAT`** uses dynamic mappings, generating a new public IP:port for each connection, making it more complex.
 
 #### Full-Cone NAT
@@ -295,7 +295,7 @@ The following four NAT types typically appear in **PAT (Port Address Translation
 These NAT types significantly affect peer-to-peer (P2P) connectivity:
 
 - **Full-Cone NAT**: Easiest for establishing P2P connections, as external hosts can directly access the mapped ports.
-- **Address-Restricted**** and ****Port-Restricted NAT**: Require the internal device to initiate the connection first. P2P applications may need **`STUN`** (Session Traversal Utilities for NAT) to facilitate NAT traversal.
+- **Address-Restricted** and **Port-Restricted NAT**: Require the internal device to initiate the connection first. P2P applications may need **`STUN`** (Session Traversal Utilities for NAT) to facilitate NAT traversal.
 - **Symmetric NAT**: Most difficult for P2P connections, as each connection has a unique mapping. Typically requires a **`TURN`** (Traversal Using Relays around NAT) server to relay data.
 
 ## Conclusion

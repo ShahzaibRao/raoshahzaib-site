@@ -16,7 +16,7 @@ Docker is an open container management platform. It is a software platform used 
 
 With Docker, you can manage your infrastructure in the same way you manage your applications. By leveraging Docker's technology, we can build, test, and deploy code quickly, significantly reducing the waiting time between writing code and running it in production.
 
-**### VMs vs Containers**
+### VMs vs Containers
 
 ![VMs vs Containers](/images/docker-core-concepts/02-download.png)
 
@@ -37,7 +37,7 @@ Docker uses a client-server architecture. The Docker client interacts with the D
 ##### 1. Update Package Database:
 
 sudo apt-get update
-**##### 2. Install Prerequisites:**
+##### 2. Install Prerequisites:
 
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 
@@ -48,18 +48,21 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 **4. Set Up Docker Repository:**
 
 sudo add-apt-repository "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-**##### 5. Update Package Database Again:**
+##### 5. Update Package Database Again:
 
 sudo apt-get update
-**##### 6. Install Docker:**
+##### 6. Install Docker:
 
 sudo apt-get install docker-ce
-**##### 6. Verify Docker Installation:**
+##### 6. Verify Docker Installation:
 
 sudo docker --version
 
 #### Docker Command Overview
-**docker help**
+
+```
+docker help
+```
 Let's run some basic Docker commands and see:
 
 ```
@@ -84,20 +87,27 @@ Common Commands:
  info Display system-wide information
 ```
 
-##### docker ps
-
 ```
-ubuntu@Docker-Lab:~$ docker ps CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
+docker ps
 ```
 
-##### docker image ls
+```
+ubuntu@Docker-Lab:~$ docker ps
+CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
+```
+
+```
+docker image ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
 REPOSITORY TAG IMAGE ID CREATED SIZE
 ```
 
-##### docker network ls
+```
+docker network ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker network ls
@@ -107,7 +117,9 @@ e10e6b7a8a46 bridge bridge local
 d76ccf9fa189 none null local
 ```
 
-##### docker volume ls
+```
+docker volume ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker volume ls
@@ -117,13 +129,18 @@ DRIVER VOLUME NAME
 ##### Create Your First Container in Docker
 
 "There are several commands to manage Docker containers and images. Let's see if there are any images available in our local Docker library or not."
-##### docker image ls
+
+```
+docker image ls
+```
 
 "The 'Docker images' command provides us with a list of local images that can be used to create Docker containers. In the given output above, no local images are being displayed."
 
-"Let's use the `**docker search ubuntu**` command to search for an image to download."
+"Let's use the `docker search ubuntu` command to search for an image to download."
 
-** docker image pull ubuntu:18.04**
+```
+docker image pull ubuntu:18.04
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image pull ubuntu:18.04
@@ -134,7 +151,10 @@ docker.io/library/ubuntu:18.04
 ```
 
 "You can check if the image has been downloaded by using the following command:"
-##### docker image ls
+
+```
+docker image ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -144,7 +164,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 "Create a Docker container using the run command and specify that the container should run the Bash shell."
-##### docker run -it ubuntu /bin/bash
+
+```
+docker run -it ubuntu /bin/bash
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker run -it ubuntu:18.04 /bin/bash
@@ -160,7 +183,10 @@ docker run is used to create and run a new container.
 ubuntu is the name of the Docker image.
 
 /bin/bash specifies the Bash shell to be run inside the container.
-Press **[ctrl+pq]** to exit#### docker container ls
+Press **[ctrl+pq]** to exit
+```
+docker container ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -171,7 +197,9 @@ ubuntu@Docker-Lab:~$
 
 "To remove a container, simply use the `rm` command provided by Docker, like this:"
 
-##### docker container rm 0efe11b043cc
+```
+docker container rm 0efe11b043cc
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container rm 0efe11b043cc
@@ -182,10 +210,16 @@ ubuntu@Docker-Lab:~$
 Replace `[container_name_or_id]` with the actual name or ID of the container you want to remove. This command will remove the specified Docker container from your system.
 
 #### Docker Container run
-"The 'Docker run' command is a combination of creating and starting a container. First, it creates a container and then starts it. The 'Docker run' command creates a writable container layer over the specified image and then starts it using the specified command."#### docker container run -d ubuntu:18.04 sleep 30
+"The 'Docker run' command is a combination of creating and starting a container. First, it creates a container and then starts it. The 'Docker run' command creates a writable container layer over the specified image and then starts it using the specified command."
+```
+docker container run -d ubuntu:18.04 sleep 30
+```
 
 Docker allows you to run a container in interactive mode as well
-##### docker container run -it ubuntu:14.04 /bin/bash
+
+```
+docker container run -it ubuntu:14.04 /bin/bash
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -d ubuntu:18.04 sleep 30
@@ -195,7 +229,10 @@ root@779c3d782a4e:/#
 ```
 
 #### Docker Container - Start and Stop
-##### docker container ls
+
+```
+docker container ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -204,18 +241,23 @@ CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 ubuntu@Docker-Lab:~$
 ```
 
-##### docker container stop [container_name_or_id] 
+```
+docker container stop [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container stop 779c3d782a4e
 779c3d782a4e
-ubuntu@Docker-Lab:~$ubuntu@Docker-Lab:~$ docker container ls -a
+ubuntu@Docker-Lab:~$
+ubuntu@Docker-Lab:~$ docker container ls -a
 CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 779c3d782a4e ubuntu:18.04 "/bin/bash" 6 minutes ago Exited (0) 50 seconds ago interesting_margulis
 ubuntu@Docker-Lab:~$
 ```
 
-##### docker container start [container_name_or_id] 
+```
+docker container start [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container start 779c3d782a4e
@@ -226,7 +268,9 @@ CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 ubuntu@Docker-Lab:~$
 ```
 
-##### docker container pause [container_name_or_id] 
+```
+docker container pause [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container pause 779c3d782a4e
@@ -237,7 +281,9 @@ CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 ubuntu@Docker-Lab:~$
 ```
 
-##### docker container unpause [container_name_or_id] 
+```
+docker container unpause [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container unpause 779c3d782a4e
@@ -248,8 +294,11 @@ CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 ubuntu@Docker-Lab:~$
 ```
 
-**#### Inspecting Docker Objects**
-"`docker inspect` ek command hai jo Docker objects jaise ki docker images, containers, networks, volumes, wagaira ke baare mein low-level information provide karta hai. Aam taur par, `docker inspect` JSON format mein results return karta hai."#### docker container inspect [container_name_or_id] 
+#### Inspecting Docker Objects
+"`docker inspect` ek command hai jo Docker objects jaise ki docker images, containers, networks, volumes, wagaira ke baare mein low-level information provide karta hai. Aam taur par, `docker inspect` JSON format mein results return karta hai."
+```
+docker container inspect [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -272,17 +321,23 @@ ubuntu@Docker-Lab:~$
 "If you are running your container in detached mode (-d) or through the Docker remote API, you won't see any logs in the console. To access the logs of a running container, you need to use the `docker logs` command."
 
 -f --follow Follow log output ( if you want to see logs continuously)
-##### docker container logs [container_name_or_id] 
+
+```
+docker container logs [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container logs 779c3d782a4e
-root@779c3d782a4e:/# ubuntu@Docker-Lab:~$ docker container run -d ubuntu:18.04 sleep 30
+root@779c3d782a4e:/#
+ubuntu@Docker-Lab:~$ docker container run -d ubuntu:18.04 sleep 30
 bash: ubuntu@Docker-Lab:~$: command not found
 root@779c3d782a4e:/# 8668c2250985bc28066e1b5a9965817ef6222ecc680b72804dcff5e53d4b550d
 bash: 8668c2250985bc28066e1b5a9965817ef6222ecc680b72804dcff5e53d4b550d: command not found
-root@779c3d782a4e:/# ubuntu@Docker-Lab:~$ docker container run -it ubuntu:18.04 /bin/bash
+root@779c3d782a4e:/#
+ubuntu@Docker-Lab:~$ docker container run -it ubuntu:18.04 /bin/bash
 bash: ubuntu@Docker-Lab:~$: command not found
-root@779c3d782a4e:/# root@779c3d782a4e:/#
+root@779c3d782a4e:/#
+root@779c3d782a4e:/#
 bash: root@779c3d782a4e:/#: No such file or directory
 root@779c3d782a4e:/# exit
 root@779c3d782a4e:/# exit
@@ -290,7 +345,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 ##### Docker Restart and Rename
-##### docker rename old_container new_container
+
+```
+docker rename old_container new_container
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -304,7 +362,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 ##### Docker Port Mapping
-"When you create a container using `docker create` or `docker run`, it doesn't automatically expose its ports to the outside world. To make ports accessible for external services, we use the `--publish` or `-p` flag. This creates a firewall rule that maps a container port to a port on the Docker host, which is accessible externally to the outside world."#### docker container run -itd -p 3600:80 nginx
+"When you create a container using `docker create` or `docker run`, it doesn't automatically expose its ports to the outside world. To make ports accessible for external services, we use the `--publish` or `-p` flag. This creates a firewall rule that maps a container port to a port on the Docker host, which is accessible externally to the outside world."
+```
+docker container run -itd -p 3600:80 nginx
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -itd -p 8080:80 nginx
@@ -323,7 +384,10 @@ Go to Browser Enter your IP with port 8080 you get index page for Nginx
 #### Docker Attach
 
 "The `docker attach` command is used to connect your terminal's standard input, output, and error streams to a running container, typically identified by its ID or name. This allows you to view the live output of the container or interactively control it, as if you were directly running commands in your terminal."
-##### docker container attach [container_name_or_id]
+
+```
+docker container attach [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -340,7 +404,10 @@ ubuntu@Docker-Lab:~$ docker container attach b3d7fa3664af
 #### Docker Container Kill
 
 "This command will stop one or more running containers. It will forcibly stop the processes inside the container. However, 'docker stop' will only stop the processes inside the container, whereas 'docker kill' will immediately terminate the process itself."
-##### docker container kill [container_name_or_id]
+
+```
+docker container kill [container_name_or_id]
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -356,7 +423,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 #### Docker Container Prune
-"This command removes all stopped containers."#### docker container prune 
+"This command removes all stopped containers."
+```
+docker container prune
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls -a
@@ -379,7 +449,10 @@ ubuntu@Docker-Lab:~$
 #### Docker Container Create
 
 "Docker run = Docker create + Docker start. The Docker create command creates a writable container from an image and prepares it for running, whereas the Docker run command creates a container (similar to Docker create) and starts it."
-##### docker container create
+
+```
+docker container create
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container create nginx sleep 60
@@ -395,7 +468,10 @@ ubuntu@Docker-Lab:~$
 #### Docker Container Diff
 
 "This command inspects changes made to files or directories in the container's filesystem. It helps us track which files or directories have been added or removed from the container layer."
-##### docker container diff
+
+```
+docker container diff
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -430,7 +506,10 @@ D: A file or directory was deleted
 #### Docker Container Copy
 
 "Sometimes we need to copy files from our local machine to a container or from a container to our local machine. Therefore, the 'container cp' command is used to copy files/folders between a container and the local filesystem, and vice versa."
-##### docker container cp file/path/ [con_id]:/path/
+
+```
+docker container cp file/path/ [con_id]:/path/
+```
 
 ```
 ubuntu@Docker-Lab:~$ echo "Hello this is Docker LAB"> index.html
@@ -454,7 +533,10 @@ docker container cp containerId:/path/in/container /path/in/hostmachine
 #### Docker Import and Export
 
 "This command exports a container's filesystem as a tar archive that can be shared. To export a container, move the exported file to the target machine and then import the container there."
-##### docker container export
+
+```
+docker container export
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -465,7 +547,9 @@ ubuntu@Docker-Lab:~$ docker container run -it ubuntu:18.04 bash
 root@a0c37ec880e8:/# apt-get update && apt-get install git -y
 root@a0c37ec880e8:/# git --version
 git version 2.17.1
-root@a0c37ec880e8:/#Press [ctrl+pq]ubuntu@Docker-Lab:~$ docker container ls
+root@a0c37ec880e8:/#
+Press [ctrl+pq]
+ubuntu@Docker-Lab:~$ docker container ls
 CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 a0c37ec880e8 ubuntu:18.04 "bash" 2 minutes ago Up 2 minutes nice_chatterjee
 ubuntu@Docker-Lab:~$ docker container export a0c37ec880e8 -o my-git.tar
@@ -475,7 +559,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 Importing a container
-##### docker image import
+
+```
+docker image import
+```
 
 ```
 ubuntu@Docker-Lab:~$ ls
@@ -500,7 +587,10 @@ root@4c82ad817bb3:/#
 #### Create Docker Image From Running Container
 
 "When working with containers, we often make installations and other changes to run our applications. And when we feel everything is set up the way we want, we might want to capture that setup into an image. In this guide, we will see how to create an image from a running container."
-##### docker container commit
+
+```
+docker container commit
+```
 "This command is used to create an image of a running container. When an image is taken, all processes are paused, ensuring that when this image is used to create another container, no issues arise."
 
 ```
@@ -516,7 +606,8 @@ root@7fa295f53021:/usr/share/nginx/html# ls
 index.html
 root@7fa295f53021:/usr/share/nginx/html# #press ctrl+pq
 root@7fa295f53021:/usr/share/nginx/html#
-root@7fa295f53021:/usr/share/nginx/html# ubuntu@Docker-Lab:~$ docker container ls
+root@7fa295f53021:/usr/share/nginx/html#
+ubuntu@Docker-Lab:~$ docker container ls
 CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
 7fa295f53021 nginx "/docker-entrypoint.…" About a minute ago Up About a minute 80/tcp priceless_antonelli
 ubuntu@Docker-Lab:~$ docker container commit 7fa295f53021 new_nginx
@@ -536,10 +627,20 @@ root@382bf4317420:/#
 #### Image Operations (Pull, Push, Tag)
 
 "Every time we run a container using an image, it first checks for that image in local storage. If the image is not found locally, Docker then searches for the image on Docker Hub."
-##### Go to docker hub and create account 
-##### docker image pull
-##### docker image push
-##### docker image Tag
+
+**Go to docker hub and create account**
+
+```
+docker image pull
+```
+
+```
+docker image push
+```
+
+```
+docker image tag
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image pull ubuntu:18.04
@@ -574,7 +675,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 go to Docker hub account and verify 
-##### docker image pull
+
+```
+docker image pull
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -604,7 +708,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 #### Docker Image List And History
-##### docker image history
+
+```
+docker image history
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -624,7 +731,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 #### Docker Image Remove
-##### docker image rm
+
+```
+docker image rm
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker images
@@ -663,18 +773,25 @@ Options:
 
 --force, -f Do not prompt for confirmation
 #### What is a docker file?
-"A Dockerfile is a document containing scripts or instructions that can be used to create an image."**vi Dockerfile**
+"A Dockerfile is a document containing scripts or instructions that can be used to create an image."
+
+```
+vi Dockerfile
+```
 
 "The Docker build command by default creates an image based on the instructions provided in a file named 'Dockerfile' located in the current working directory. It is always recommended to name your Dockerfile as 'Dockerfile'. If you name it differently, you would need to explicitly specify the name of the Dockerfile using the '-f' option with the docker build command.
 
 ```dockerfile
 FROM ubuntu:18.04
 ```
-In the Dockerfile content above, an image will be created based on the ubuntu:18.04 **base **Docker image.
+In the Dockerfile content above, an image will be created based on the ubuntu:18.04 **base**Docker image.
 The '**FROM**' keyword is used to specify the base image, and it will create a layer with the docker image '**ubuntu:18.04**' as the base layer.
 Note: Best practices related to **Dockerfiles** are available in the Docker documentation.
-When you execute the build command, an image named '**myubuntu**' with tag '1' will be created, as shown in the example above. You will notice that the **IMAGE_ID **for '**myubuntu:1**' and '**ubuntu:18.04**' is the same. This is because there were no file structure changes in the base image, so the new image is tagged with the same ID as the existing image."
-##### vi Dockerfile
+When you execute the build command, an image named '**myubuntu**' with tag '1' will be created, as shown in the example above. You will notice that the **IMAGE_ID**for '**myubuntu:1**' and '**ubuntu:18.04**' is the same. This is because there were no file structure changes in the base image, so the new image is tagged with the same ID as the existing image."
+
+```
+vi Dockerfile
+```
 
 ```
 FROM ubuntu:16.04
@@ -689,7 +806,10 @@ The `RUN` instruction is used to execute any command on the image, adding a new 
 The Docker daemon executes each instruction provided in the Dockerfile one by one, and each instruction is executed independently. Therefore, the impact of one instruction doesn't affect the next one. Each instruction in the Dockerfile creates a new layer on top of existing layers.
 
 Before creating a new image, let's check which images are currently present in our file system."
-##### docker image build -t
+
+```
+docker image build -t
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image build -t myubuntu:1 .
@@ -748,7 +868,10 @@ Labels are stored as key-value pairs, represented as strings, and can be used to
 "The 'RUN' instruction is used to execute any command in a new layer on top of the current image, and the resulting image is used for the next step in the Dockerfile."
 
 "The 'WORKDIR' instruction is used to set or change the working directory for any instructions that follow in the Dockerfile."
-##### vi Dockerfile
+
+```
+vi Dockerfile
+```
 
 ```
 FROM ubuntu:18.04
@@ -812,7 +935,8 @@ ubuntu@Docker-Lab:~$ cd devopslab/
 ubuntu@Docker-Lab:~/devopslab$ echo "This is devops lab by Rao Shahzaib" > read.me
 ubuntu@Docker-Lab:~/devopslab$ ls
 read.me
-ubuntu@Docker-Lab:~/devopslab$ cd ..ubuntu@Docker-Lab:~$ ls
+ubuntu@Docker-Lab:~/devopslab$ cd ..
+ubuntu@Docker-Lab:~$ ls
 Dockerfile devopslab index.html
 ubuntu@Docker-Lab:~$ tar cfv archive.tar index.html
 index.html
@@ -822,7 +946,9 @@ ubuntu@Docker-Lab:~$
 ubuntu@Docker-Lab:~$ vi Dockerfile
 ```
 
-##### vi Dockerfile
+```
+vi Dockerfile
+```
 
 ```
 FROM ubuntu:14.04
@@ -832,7 +958,9 @@ ADD archive.tar /tmp/mydata/
 ADD https://www.free-css.com/free-css-templates/page296/oxer /tmp/mydata/
 ```
 
-##### docker image build -t myubuntu:3 .
+```
+docker image build -t myubuntu:3 .
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -908,7 +1036,10 @@ root@0f1c1fdaa5d3:/tmp/mydata#
 "The 'CMD' instruction is used to provide a default executable or entry point for an executing container. When an executable is provided in the 'CMD' instruction, it will be automatically executed when the container is run."
 
 "The 'ENTRYPOINT' instruction allows us to configure a container as an executable."
-##### vi Dockerfile
+
+```
+vi Dockerfile
+```
 
 ```
 FROM ubuntu:18.04
@@ -916,7 +1047,9 @@ RUN apt-get update && apt-get install -y openssh-server && apt-get install -y py
 CMD ["python"]
 ```
 
-##### docker image build -t myubuntu:4 .
+```
+docker image build -t myubuntu:4 .
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image build -t myubuntu:4 .
@@ -961,7 +1094,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 ubuntu@Docker-Lab:~$
 ```
 
-##### vi Dockerfile
+```
+vi Dockerfile
+```
 
 ```
 FROM ubuntu:18.14
@@ -969,7 +1104,9 @@ RUN apt-get update && apt-get install -y python tree
 ENTRYPOINT ["tree"]
 ```
 
-##### docker image build -t myubuntu:5 .
+```
+docker image build -t myubuntu:5 .
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image build -t myubuntu:5 .
@@ -1022,7 +1159,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 lets run our container with our image
-##### docker container run -it myubuntu:5
+
+```
+docker container run -it myubuntu:5
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -it myubuntu:5
@@ -1076,17 +1216,23 @@ Firstly, let's understand how storage works in Docker. If we talk about default 
 Therefore, we never store data directly inside a Docker container. Instead, we store our data in different storage types provided by Docker. These storage options offer better performance and scalability."
 ##### Docker Storage types
 
-1. **Volumes **
-1. **Bind mount **
+1. **Volumes**
+1. **Bind mount**
 1. **Tmpfs mount**
 
-##### docker volume ls
-
 ```
-ubuntu@Docker-Lab:~$ docker volume lsDRIVER VOLUME NAMEubuntu@Docker-Lab:~$
+docker volume ls
 ```
 
-##### docker volume create
+```
+ubuntu@Docker-Lab:~$ docker volume ls
+DRIVER VOLUME NAME
+ubuntu@Docker-Lab:~$
+```
+
+```
+docker volume create
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker volume create olxdata
@@ -1098,7 +1244,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 now we create a MySQL container and attach olxdata volume with it
-##### docker container run -d --name container_name -v volume_name:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+
+```
+docker container run -d --name container_name -v volume_name:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -d --name olx_database -v olxdata:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql Unable to find image 'mysql:latest' locally
@@ -1119,7 +1268,7 @@ Status: Downloaded newer image for mysql:latest
 ubuntu@Docker-Lab:~$
 ```
 
-##### Create some data in mysql container for testing 
+**Create some data in mysql container for testing**
 
 ```
 ubuntu@Docker-Lab:~$ docker container ls
@@ -1184,7 +1333,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 now im going to create a another MySQL container and attach olxdata volume with it, so we can check data is persistent or not 
-##### docker container run -d --name new_olx_container -v olxdata:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+
+```
+docker container run -d --name new_olx_container -v olxdata:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -d --name new_olx_container -v olxdata:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
@@ -1222,7 +1374,7 @@ bash-4.4#
 ```
 
 #### Docker Bind mount
-##### "By using Docker bind mounts, you can mount a file or folder from the host machine into the container. The file or directory is referenced on the host machine through its absolute path."
+"By using Docker bind mounts, you can mount a file or folder from the host machine into the container. The file or directory is referenced on the host machine through its absolute path."
 
 ```
 ubuntu@Docker-Lab:~$ mkdir bind
@@ -1233,7 +1385,9 @@ hello user this devops lab
 ubuntu@Docker-Lab:~/bind$
 ```
 
-##### docker container run -it -v /host/path:/container/path ubuntu:18.04
+```
+docker container run -it -v /host/path:/container/path ubuntu:18.04
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -it -v /home/ubuntu/bind/:/tmp/ ubuntu:18.04
@@ -1263,9 +1417,9 @@ ubuntu@Docker-Lab:~/bind$
 "Now let's talk about Docker networks. We'll explore how our created containers communicate with each other and how we can create networks according to our requirements. When we run a service, it might be dependent on different containers. Hence, communication between containers is essential. For applications to communicate effectively, there needs to be virtualized networking, enabling them to communicate seamlessly without any additional effort. Docker networks make this possible."
 
 "Docker networks are essentially connections between one container and another. It's also possible for a network to connect different sets of containers. Managing and isolating them becomes very easy with Docker networks. Isolation is a crucial aspect; if you want to prevent a container from communicating with another, you can place it in isolation."
-**### Types of **networks
+### Types of networks
 
-1. **### Bridge network **
+1. **Bridge network**
 
 1. **Host network**
 
@@ -1288,12 +1442,15 @@ Host network essentially eliminates the isolation layer between your host system
 Overlay network is a vital network type, especially when we talk about connecting different nodes. For instance, if you have 5 or 8 servers with Docker engines running on them and containers on these servers need to communicate with each other, they can use the Overlay network. Unlike Bridge network, when containers need to communicate across servers, Overlay network comes into play.
 
 ##### Macvlan Network:
-##### Macvlan network helps us in fooling software. By 'fooling', we mean that when you have legacy software that always needs physical access for communication over a specific network, this type of network comes in handy. These are old applications that require a real physical network connection. However, nowadays, we can create virtual networks. Using Macvlan, we can make these applications believe they are connected to an actual physical network, even though it's a virtual network, by generating Mac addresses.
+Macvlan network helps us in fooling software. By 'fooling', we mean that when you have legacy software that always needs physical access for communication over a specific network, this type of network comes in handy. These are old applications that require a real physical network connection. However, nowadays, we can create virtual networks. Using Macvlan, we can make these applications believe they are connected to an actual physical network, even though it's a virtual network, by generating Mac addresses.
 
 ##### None Network 
 
 The 'None' network essentially means no networking. Containers in this mode don't have external network access. It's useful in situations where you want complete network isolation for your containers."
-##### docker network ls
+
+```
+docker network ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker network ls
@@ -1304,9 +1461,11 @@ d76ccf9fa189 none null local
 ubuntu@Docker-Lab:~$
 ```
 
-##### Let's inspect this network-
+**Let's inspect this network-**
 
-##### docker network inspect 
+```
+docker network inspect
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker network inspect bridge
@@ -1350,7 +1509,7 @@ ubuntu@Docker-Lab:~$ docker network inspect bridge
 ubuntu@Docker-Lab:~$
 ```
 
-##### Lets create docker network
+**Lets create docker network**
 
 ```
 ubuntu@Docker-Lab:~$ docker network create --driver bridge olxnet
@@ -1364,7 +1523,7 @@ fe31926f6708 olxnet bridge local
 ubuntu@Docker-Lab:~$
 ```
 
-##### Let's run two container 1 with default bridge network or 1 with out olxnet , and can the communicate. 
+**Let's run two container 1 with default bridge network or 1 with out olxnet , and can the communicate.**
 
 ```
 ubuntu@Docker-Lab:~$ docker run -itd --name defaultCon ubuntu:18.04
@@ -1413,7 +1572,7 @@ ubuntu@Docker-Lab:~$ docker container inspect defaultCon
 ubuntu@Docker-Lab:~$ copy the IPAddress
 ```
 
-##### lets see.
+**lets see.**
 
 ```
 ubuntu@Docker-Lab:~$ docker run -itd --name olxCon --network olxnet ubuntu:18.04
@@ -1444,9 +1603,11 @@ bash: not: command not found
 root@0e0f7d975759:/#
 ```
 
-##### if we run both both container in same network then the will able to communicate each other.
+**if we run both both container in same network then the will able to communicate each other.**
 
-##### ping 172.18.0.3
+```
+ping 172.18.0.3
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker run -itd --name olxnewCon --network olxnet ubuntu:18.04
@@ -1522,7 +1683,10 @@ root@0e0f7d975759:/# boom the ping each other
 #### Host Network
 
 Docker container that are connected to host network basically shared the namespace with their hosts. i.e the containers share the IP address of the host and don't have one of their own.
-##### docker container run -itd --name MyCon --network host nginx
+
+```
+docker container run -itd --name MyCon --network host nginx
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker network ls
@@ -1539,9 +1703,11 @@ eefa1058d789 nginx "/docker-entrypoint.…" 4 seconds ago Up 4 seconds MyCon
 ubuntu@Docker-Lab:~$ Go to your and enter your IP
 ```
 
-##### lets verify
+**lets verify**
 
-##### curl localhost
+```
+curl localhost
+```
 
 ```
 ubuntu@Docker-Lab:~$ curl localhost
@@ -1572,7 +1738,10 @@ ubuntu@Docker-Lab:~$
 ```
 
 ##### Remove Network's
-##### docker network rm
+
+```
+docker network rm
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker network ls
@@ -1597,7 +1766,10 @@ ubuntu@Docker-Lab:~$
 However, if we want to download or push these images from/to our private registry instead of Docker Hub, we can achieve this using Docker Registry.
 A Registry is a stateless, highly scalable server-side application that stores Docker images and allows distribution. It is open-source and operates under the Apache license.
 Docker provides its own image for this purpose named 'registry.' To use it, we need to pull this image and run a container based on it."
-##### docker container run -d -p 5000:5000 --name my_registry registry
+
+```
+docker container run -d -p 5000:5000 --name my_registry registry
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker container run -d -p 5000:5000 --name my_registry registry
@@ -1642,11 +1814,13 @@ ubuntu@Docker-Lab:~$ docker container inspect my_registry
 ubuntu@Docker-Lab:~$
 ```
 
-##### "We can view volume information in the format provided above by using the 'inspect' command output. If, for any reason, our container stops and we want to restart it, we can reconnect the same volume to the container using the volume information given above.
+"We can view volume information in the format provided above by using the 'inspect' command output. If, for any reason, our container stops and we want to restart it, we can reconnect the same volume to the container using the volume information given above.
 
 Notice in the volume information provided above, the 'driver' is 'local' because our data will be stored in the local file system. There are also drivers available for remote cloud storage, allowing us to store our data remotely, such as AWS S3, Google Cloud, Azure, and others."
 
-##### docker image push local_registry
+```
+docker image push local_registry
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -1676,9 +1850,11 @@ latest: digest: sha256:0d60ba9498d4491525334696a736b4c19b56231b972061fab2f536d48
 ubuntu@Docker-Lab:~$
 ```
 
-##### The image is pushed. Now let’s verify if the image is pushed successfully or not. For verifying, curl to http://127.0.0.1:5000/v2/_catalog, we see that our image has been pushed successfully.
+The image is pushed. Now let’s verify if the image is pushed successfully or not. For verifying, curl to http://127.0.0.1:5000/v2/_catalog, we see that our image has been pushed successfully.
 
-##### docker network ls
+```
+docker network ls
+```
 
 ```
 ubuntu@Docker-Lab:~$ curl http://127.0.0.1:5000/v2/_catalog
@@ -1686,9 +1862,11 @@ ubuntu@Docker-Lab:~$ curl http://127.0.0.1:5000/v2/_catalog
 ubuntu@Docker-Lab:~$
 ```
 
-##### Now let us delete the Redis image present on our local file system.
+**Now let us delete the Redis image present on our local file system.**
 
-##### docker rmi 
+```
+docker rmi
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image ls
@@ -1704,11 +1882,13 @@ Untagged: 127.0.0.1:5000/newubuntu@sha256:0d60ba9498d4491525334696a736b4c19b5623
 ubuntu@Docker-Lab:~$
 ```
 
-##### If we disconnect our internet and try to pull the same image again, we get the below error as the default registry is unreachable.
+If we disconnect our internet and try to pull the same image again, we get the below error as the default registry is unreachable.
 
 But we are able to download the image from the local registry.
 
-##### docker image pull 127.0.0.1:5000/newubuntu:latest
+```
+docker image pull 127.0.0.1:5000/newubuntu:latest
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image pull 127.0.0.1:5000/newubuntu:latest
@@ -1726,9 +1906,11 @@ ubuntu 18.04 f9a80a55f492 4 months ago 63.2MB
 ubuntu@Docker-Lab:~$
 ```
 
-##### When we try to push this image,we get the error message shown in the below image which tells us to use https instead of http.
+When we try to push this image,we get the error message shown in the below image which tells us to use https instead of http.
 
-##### docker image push 172.31.11.221:5000/mynginx
+```
+docker image push 172.31.11.221:5000/mynginx
+```
 
 ```
 ubuntu@Docker-Lab:~$ docker image tag nginx:latest 172.31.11.221:5000/mynginx:latest
@@ -1747,13 +1929,15 @@ Get "https://172.31.11.221:5000/v2/": http: server gave HTTP response to HTTPS c
 ubuntu@Docker-Lab:~$
 ```
 
-##### "To allow Docker to access insecure locations, we need to modify the Docker configuration in the following way:
+"To allow Docker to access insecure locations, we need to modify the Docker configuration in the following way:
 
 First, we need to locally create the 'daemon.json' file and add the IP address we want to allow in the IP list.
 
 Here is an example of how we can create the 'daemon.json' file in the '/etc/docker' directory:"
 
-##### vi daemon.json
+```
+vi daemon.json
+```
 
 ```
 ubuntu@Docker-Lab:~$ cd /etc/docker/
@@ -1764,9 +1948,11 @@ ubuntu@Docker-Lab:/etc/docker$ vi daemon.json
 }
 ```
 
-##### Now we need to restart the docker service and our container which has stopped.
+**Now we need to restart the docker service and our container which has stopped.**
 
-##### sudo systemctl restart docker
+```
+sudo systemctl restart docker
+```
 
 ```
 ubuntu@Docker-Lab:/etc/docker$ sudo systemctl restart docker
@@ -1778,9 +1964,11 @@ my_registry
 ubuntu@Docker-Lab:/etc/docker$
 ```
 
-##### Now if we push our image again -
+**Now if we push our image again -**
 
-##### docker image push 172.31.11.221:5000/mynginx
+```
+docker image push 172.31.11.221:5000/mynginx
+```
 
 ```
 ubuntu@Docker-Lab:/etc/docker$ docker image push 172.31.11.221:5000/mynginx
@@ -1797,4 +1985,4 @@ latest: digest: sha256:0d60ba9498d4491525334696a736b4c19b56231b972061fab2f536d48
 ubuntu@Docker-Lab:/etc/docker$
 ```
 
-##### The image is pushed successfully!
+**The image is pushed successfully!**

@@ -44,7 +44,7 @@ CoreDNS excels in modern, dynamic cloud-native environments due to three key adv
 
 ### **The Core Architecture: A Chain of Plugins**
 
-The CoreDNS server itself does very little. Its main job is to **receive a DNS query and pass it down a ****`"plugin chain"`**. **Each plugin in the chain is a self-contained piece of code that performs one specific task.**
+The CoreDNS server itself does very little. Its main job is to **receive a DNS query and pass it down a** **`"plugin chain"`**. **Each plugin in the chain is a self-contained piece of code that performs one specific task.**
 
 ### **How a Query Flows Through CoreDNS**
 
@@ -75,7 +75,7 @@ my-app.local {
 
 #### **Flowchart Explanation**
 
-> **The Flowchart above shows a typical flow. A query first goes to the *****log***** plugin (which logs every query), then to the *****cache***** (to check for a cached answer), then to *****rewrite***** (to potentially block a domain), and finally to *****forward***** to ask an upstream resolver like Google's 8.8.8.8. The first plugin to provide a definitive answer stops the chain.**
+> **The Flowchart above shows a typical flow. A query first goes to the ***log*** plugin (which logs every query), then to the ***cache*** (to check for a cached answer), then to ***rewrite*** (to potentially block a domain), and finally to ***forward*** to ask an upstream resolver like Google's 8.8.8.8. The first plugin to provide a definitive answer stops the chain.**
 
 ### **CoreDNS vs. BIND: The Need for a New Approach**
 

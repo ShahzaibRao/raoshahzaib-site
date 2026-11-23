@@ -115,7 +115,7 @@ So how do we actually perform filtering? We simply add rules to the correspondin
 
 ### **Useful Commands**
 
-#### **Using the ****`iptables-save`**** Command**
+#### **Using the `iptables-save` Command**
 
 ![Diagram: Using the iptables-save Command](/images/iptables-docker-linux-bridge/03-iptables-docker-linux-bridge.png)
 
@@ -138,7 +138,7 @@ The `[0:0]` after each chain represents `[packet count : byte count]`.
 - Packet count (`0` here) indicates how many packets have been processed by this chain.
 - Byte count (`0` here) indicates the total size in bytes of all processed packets.
 
-#### **Using the ****`iptables`**** Command**
+#### **Using the `iptables` Command**
 
 Besides using `iptables-save`, we can also use the `iptables` command with other options to view the rules. For example, the following command shows the filter table with detailed information: `$ iptables -L -t filter -v`
 
@@ -181,7 +181,7 @@ A **`bridge`** is a virtual network interface in the Linux kernel that implement
 
 ### What’s the relationship between bridge and iptables?
 
-By default,* ****bridges only handle Layer 2 (MAC address) packet forwarding***, so bridged traffic (e.g., between VMs or containers) **does not necessarily pass through iptables**.
+By default, ***bridges only handle Layer 2 (MAC address) packet forwarding***, so bridged traffic (e.g., between VMs or containers) **does not necessarily pass through iptables**.
 
 If you want to use iptables firewalls to control:
 
@@ -220,7 +220,7 @@ you **must enable** the kernel parameter `net.bridge.bridge-nf-call-iptables`. O
 
 ### Set Up the Experiment Environment
 
-> This environment uses the **Ubuntu 24.04 server **provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
+> This environment uses the **Ubuntu 24.04 server** provided by **iximiuz Labs**, which offers a fast and convenient online practice environment.
 
 > Reference: [https://labs.iximiuz.com/](https://labs.iximiuz.com/)
 
@@ -228,11 +228,12 @@ you **must enable** the kernel parameter `net.bridge.bridge-nf-call-iptables`. O
 
 - Install following the official guide: [Ubuntu](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 - After installation, the Docker service is not enabled by default, so we need to enable it using the following command:
-  ```bash
-  $ sudo systemctl status docker.service
-  $ sudo systemctl start docker.service
-  $ sudo systemctl enable docker.service
-  ```
+
+```bash
+$ sudo systemctl status docker.service
+$ sudo systemctl start docker.service
+$ sudo systemctl enable docker.service
+```
 
 ### Comparison of iptables Before and After Installing Docker
 
@@ -273,7 +274,7 @@ COMMIT
 
 #### **Main Differences (Brief Summary)**
 
-**1\. The default policy of the `FORWARD` chain changes from **`ACCEPT`** to **`DROP`**
+**1\. The default policy of the `FORWARD` chain changes from `ACCEPT` to `DROP`**
 
 - **Impact**: This is the most significant change. The FORWARD chain, which originally allowed all forwarding traffic, now defaults to dropping all forwarded packets unless explicitly permitted by a rule. This may block non-Docker forwarding traffic, such as LXD, VPN, or other bridged networks.
 - **Reason**: To ensure the security of container networks, Docker sets the default policy of the FORWARD chain to DROP and only allows traffic that matches its specific rules to pass through.
@@ -353,9 +354,9 @@ The information after setup is shown in the two images below (the left image dis
 ![Diagram: Scenario 1. FORWARD chain is DROP](/images/iptables-docker-linux-bridge/09-iptables-docker-linux-bridge.png)
 In Experiment 1, we clearly saw that Docker changes the iptables `FORWARD` chain policy to `DROP` and handles packet forwarding through the `docker0` bridge. Because of this, our self-created `br0` bridge cannot function properly.
 
-- **Step 1****:** Use the command `$ iptables-save -t filter` to check the current iptables configuration.
-- **Step 2****:** Monitor packets passing through the Host’s `br0` bridge interface.
-- **Step 3****:** From `ns1`, ping `ns2`.
+- **Step 1:** Use the command `$ iptables-save -t filter` to check the current iptables configuration.
+- **Step 2:** Monitor packets passing through the Host’s `br0` bridge interface.
+- **Step 3:** From `ns1`, ping `ns2`.
 
 After these steps, we observe two key points:
 
@@ -378,9 +379,9 @@ From Scenario 1, we learned that the state of the iptables FORWARD chain affects
 
 Yes, we can achieve this by adjusting the kernel parameter `net.bridge.bridge-nf-call-iptables` so that packets passing through the `br0` interface are not processed by iptables’ filter table.
 
-- **Step 1****:** Use `$ iptables-save -t filter` to check the current iptables configuration.
-- **Step 2****:** Set `net.bridge.bridge-nf-call-iptables` to `0` to prevent packets going through the `br0` bridge from being filtered by iptables.
-- **Step 3****:** Ping from `ns1` to `ns2`.
+- **Step 1:** Use `$ iptables-save -t filter` to check the current iptables configuration.
+- **Step 2:** Set `net.bridge.bridge-nf-call-iptables` to `0` to prevent packets going through the `br0` bridge from being filtered by iptables.
+- **Step 3:** Ping from `ns1` to `ns2`.
 
 > Conclusion: We can use the kernel parameter `net.bridge.bridge-nf-call-iptables` to control whether packets passing through a bridge bypass iptables’ filter table.
 

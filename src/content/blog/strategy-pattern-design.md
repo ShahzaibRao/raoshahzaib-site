@@ -15,23 +15,23 @@ By Rao Shahzaib · DevOps
 **You are given a large collection of Individual data. Each record contains the following fields:**
 
 - ID
-- A positive integer (> 0).
-- Each individual has a unique ID.
+  - A positive integer (> 0).
+  - Each individual has a unique ID.
 - Gender
-- MALE represents male.
-- FEMALE represents female.
+  - MALE represents male.
+  - FEMALE represents female.
 - Age
-- A positive integer.
-- Must be at least 18 years old.
+  - A positive integer.
+  - Must be at least 18 years old.
 - Introduction (Intro)
-- Text with a length of approximately 0–200 characters.
+  - Text with a length of approximately 0–200 characters.
 - Habits
-- An individual may have multiple habits.
-- Each habit is represented by a string of length 1–10 characters.
-- Habits are separated by commas.
-- Example: Basketball, Cooking, Gaming
+  - An individual may have multiple habits.
+  - Each habit is represented by a string of length 1–10 characters.
+  - Habits are separated by commas.
+  - Example: Basketball, Cooking, Gaming
 - Coordinates (Coord)
-- Represented as (x, y), indicating the individual’s position on the x-axis and y-axis.
+  - Represented as (x, y), indicating the individual’s position on the x-axis and y-axis.
 
 **Matchmaking System**
 
@@ -40,16 +40,16 @@ You are required to implement a Matchmaking System. The system matches each user
 The system initially provides two matchmaking strategies, and more strategies will be added in the future:
 
 - Distance-Based Strategy
-- Match with the individual who is closest in distance.
-- If distances are equal, choose the individual with the smaller ID.
-- Given the current user’s coordinates (x, y) and another individual’s coordinates (x′, y′), the distance is calculated as: (*y*−*y*′)2＋(*x*−*x*′)2
+  - Match with the individual who is closest in distance.
+  - If distances are equal, choose the individual with the smaller ID.
+  - Given the current user’s coordinates (x, y) and another individual’s coordinates (x′, y′), the distance is calculated as: (*y*−*y*′)2＋(*x*−*x*′)2
 - Habit-Based Strategy
-- Match with the individual who has the largest number of shared habits.
-- If the number of shared habits is equal, choose the individual with the smaller ID.
+  - Match with the individual who has the largest number of shared habits.
+  - If the number of shared habits is equal, choose the individual with the smaller ID.
 - Reverse Strategies
-- Some users prefer to meet more diverse people. Therefore, for each strategy, the system must also provide a reverse implementation:
-- The reverse of Distance-Based matches the individual who is farthest away.
-- The reverse of Habit-Based matches the individual with the smallest number of shared habits.
+  - Some users prefer to meet more diverse people. Therefore, for each strategy, the system must also provide a reverse implementation:
+  - The reverse of Distance-Based matches the individual who is farthest away.
+  - The reverse of Habit-Based matches the individual with the smallest number of shared habits.
 
 **Design Requirements (Non-Functional Requirements)**
 
