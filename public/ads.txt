@@ -1,1 +1,2 @@
-# AdSense publisher line goes here after approval (format: google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0).
+# Google AdSense
+google.com, pub-1013537078437044, DIRECT, f08c47fec0942fa0
